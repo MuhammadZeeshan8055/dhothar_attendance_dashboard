@@ -2,14 +2,27 @@
     include("session.php");
     $obj = new Database();
 
-    $obj->select('attendance_record');
+    $id=$empid;
+    
+    $colName = "emp_id,shift_date,start_time,end_time,worked_hours,overtime";
+	$join = "";
+	$limit = 0;
+    $where = "attendance_record.emp_id=$id AND attendance_record.shift_date = CURDATE()";
+    
 
+	$obj->select('attendance_record',$colName,$join,$where,null,$limit);
     $result = $obj->getResult();
 
-    foreach ($result as list("emp_id"=>$emp_id,"shift_date"=>$shift_date,
-    "start_time"=>$start_time,"end_time"=>$end_time,"worked_hours"=>$worked_hours,"overtime"=>$overtime)) {
-
-	}
+    if(!empty($result)){
+        $attendance_record = $result[0];
+    
+        // Extracting the values
+        $shift_date = $attendance_record['shift_date'];
+        $start_time = $attendance_record['start_time'];
+        $end_time = $attendance_record['end_time'];
+        $worked_hours = $attendance_record['worked_hours'];
+        $overtime = $attendance_record['overtime'];
+    }
     
 ?>
 <!DOCTYPE html>
@@ -186,57 +199,31 @@
                                     style="display: flex;flex-direction: column;align-items: center;">
                                     <h4 class="card-title">Check In / Out Timings</h4>
 
-                                    <p class="mt-2 show-shift-details" style="font-weight: 800;display:none"><span
-                                            id="shift_started_at" class="text-success" style="display:none">Shift Start
-                                            At
-                                            : 09:00 am </span>
+                                    <?php if (!empty($start_time) || !empty($end_time)) { ?>
+                                    <p class="mt-2 show-shift-details" style="font-weight: 800;">
+                                        <?php if (!empty($start_time)) { ?>
+                                        <span id="shift_started_at" class="text-success">Shift Start At:
+                                            <?= $start_time ?></span>
+                                        <?php } ?>
+
+                                        <?php if (!empty($end_time)) { ?>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span class="text-danger" id="shift_ended_at">|
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift Ended At: <?= $end_time ?></span>
+                                        <?php } ?>
+                                    </p>
+                                    <?php } else { ?>
+                                    <p class="mt-2 show-shift-details" style="font-weight: 800; display:none;">
+                                        <span id="shift_started_at" class="text-success" style="display:none">Shift
+                                            Start At: 09:00 am</span>
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         <span class="text-danger" id="shift_ended_at" style="display:none">|
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift End At : 09:00 am</span>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift End At: 09:00 am</span>
                                     </p>
+                                    <?php } ?>
+
 
                                     <div class="clock-design">
-
-                                        <!-- <div class="clock">
-                                            <div class="hand hour" id="hour"></div>
-                                            <div class="hand minute" id="minute"></div>
-                                            <div class="hand second" id="second"></div>
-                                            <div class="center"></div>
-                                        </div>
-
-                                        <script>
-                                        function updateClock() {
-                                            const now = new Date();
-                                            const options = {
-                                                timeZone: "Asia/Karachi"
-                                            };
-                                            const time = new Intl.DateTimeFormat('en-US', {
-                                                hour12: false,
-                                                ...options
-                                            }).format(now);
-
-                                            // Get hours, minutes, and seconds from the Date object
-                                            const hours = now.getHours();
-                                            const minutes = now.getMinutes();
-                                            const seconds = now.getSeconds();
-
-                                            // Calculate degrees for clock hands
-                                            const hourDeg = (hours % 12) * 30 + minutes *
-                                                0.5; // 30 degrees per hour and 0.5 per minute
-                                            const minuteDeg = minutes * 6; // 6 degrees per minute
-                                            const secondDeg = seconds * 6; // 6 degrees per second
-
-                                            // Apply rotation to clock hands
-                                            document.getElementById("hour").style.transform = `rotate(${hourDeg}deg)`;
-                                            document.getElementById("minute").style.transform =
-                                                `rotate(${minuteDeg}deg)`;
-                                            document.getElementById("second").style.transform =
-                                                `rotate(${secondDeg}deg)`;
-                                        }
-
-                                        setInterval(updateClock, 1000); // Update every second
-                                        updateClock(); // Initialize the clock immediately
-                                        </script> -->
 
                                         <div class="clock">
                                             <div class="outer-clock-face">
@@ -279,18 +266,36 @@
 
                                     </div>
 
-                                    <button id="start_shift" data-id='<?=$empid?>'
+
+                                    <?php if (!empty($start_time) && empty($end_time)) { ?>
+                                    <button id="end_shift" data-id='<?= $empid ?>'
+                                        class="btn btn-danger mt-2 btn-large">
+                                        End Shift
+                                    </button>
+                                    <?php } ?>
+
+                                    <?php if (!empty($end_time)) { ?>
+                                    <p id="show-end-shift-message" class="mt-2">
+                                        <span class="text-success">See you tomorrow! 👋</span>
+                                    </p>
+                                    <?php } ?>
+
+                                    <?php if (empty($start_time) && empty($end_time)) { ?>
+                                    <button id="start_shift" data-id='<?= $empid ?>'
                                         class="btn btn-success mt-2 btn-large">
                                         Start Shift
                                     </button>
-
-                                    <button id="end_shift" data-id='<?=$empid?>' class="btn btn-danger mt-2 btn-large"
+                                    <button id="end_shift" data-id='<?= $empid ?>' class="btn btn-danger mt-2 btn-large"
                                         style="display:none">
                                         End Shift
                                     </button>
+                                    <p id="show-end-shift-message" class="mt-2" style="display:none">
+                                        <span class="text-success">See you tomorrow! 👋</span>
+                                    </p>
+                                    <?php } ?>
 
-                                    <p id="show-end-shift-message" class="mt-2" style="display:none"><span
-                                            class="text-success">See you tomorrow! 👋</span></p>
+
+
 
                                 </div>
                             </div>
@@ -350,77 +355,8 @@
                                 </div> -->
                                 <div class="card-body pt-8">
                                     <div class="table-responsive">
-                                        <table class="table mb-0 align-middle text-nowrap">
-                                            <thead>
-                                                <tr>
-                                                    <th class="fs-3 ps-0">Shift Date</th>
-                                                    <th class="fs-3">Start Time</th>
-                                                    <th class="fs-3">End Time</th>
-                                                    <th class="fs-3">Worked Hours
-                                                    </th>
-                                                    <th class="fs-3">Overtime
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td class="ps-0 fs-3 text-muted">03-03-2025 </td>
-                                                    <td class="text-muted fs-3">08:53 am</td>
-                                                    <td class="text-muted fs-3">04:01 pm</td>
-                                                    <td class="pe-0">
-                                                        <span class="text-success fw-medium fs-3">
-                                                            9 H, 07 m, 50 s</span>
-                                                    </td>
-                                                    <td>07 m, 50 s</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="ps-0 fs-3 text-muted">03-03-2025</td>
-                                                    <td class="text-muted fs-3">08:53 am</td>
-                                                    <td class="text-muted fs-3">04:01 pm</td>
-                                                    <td class="pe-0">
-                                                        <span class="text-success fw-medium fs-3">
-                                                            9 H, 00 </span>
-                                                    </td>
-                                                    <td>00</td>
-
-                                                </tr>
-                                                <tr>
-                                                    <td class="ps-0 fs-3 text-muted"><span
-                                                            class="text-danger">04-03-2025</span></td>
-                                                    <td class="text-muted fs-3 "><span class="text-danger">--</span>
-                                                    </td>
-                                                    <td class="text-muted fs-3 text-danger"><span
-                                                            class="text-danger">--</span></td>
-                                                    <td class="pe-0">
-                                                        <span class="text-danger fw-medium fs-3">
-                                                            --</span>
-                                                    </td>
-                                                    <td><span class="text-danger">--</span></td>
-
-                                                </tr>
-                                                <tr>
-                                                    <td class="ps-0 fs-3 text-muted">03-03-2025 </td>
-                                                    <td class="text-muted fs-3">08:53 am</td>
-                                                    <td class="text-muted fs-3">04:01 pm</td>
-                                                    <td class="pe-0">
-                                                        <span class="text-danger fw-medium fs-3">
-                                                            8 H, 00 </span>
-                                                    </td>
-                                                    <td>00</td>
-
-                                                </tr>
-                                                <tr>
-                                                    <td class="ps-0 fs-3 text-muted">03-03-2025 </td>
-                                                    <td class="text-muted fs-3">08:53 am</td>
-                                                    <td class="text-muted fs-3">04:01 pm</td>
-                                                    <td class="pe-0">
-                                                        <span class="text-success fw-medium fs-3">
-                                                            9 H, 07 m, 50 s</span>
-                                                    </td>
-                                                    <td>07 m, 50 s</td>
-
-                                                </tr>
-                                            </tbody>
+                                        <table class="table mb-0 align-middle text-nowrap"  id="attendance_record">
+                                            
                                         </table>
                                     </div>
                                 </div>
@@ -458,6 +394,23 @@
     <script>
     $(document).ready(function() {
 
+        function loadTable() {
+            $("#attendance_record").html('<div class="loader">Loading Data...</div>'); // Show loader before AJAX call
+        
+            $.ajax({
+                url: "emp_attendance_record",
+                type: "POST",
+                success: function (data) {
+                    $("#attendance_record").html(data); // Replace loader with table data
+                },
+                error: function () {
+                    $("#attendance_record").html("<p>Error loading data.</p>"); // Handle errors
+                }
+            });
+        }
+        
+        // Load Table Records on Page Load
+        loadTable();
 
         $("#show-salary").on("click", function() {
             $("#salary").show(); // Show the salary
@@ -473,21 +426,27 @@
             $.ajax({
                 url: "ajax/shift_started",
                 type: "POST",
+                dataType: "json", // Expect JSON response
                 data: {
                     Empid: empid
                 },
                 success: function(res) {
-                    console.log('Employee Id: ', res);
-                    if (res == 1) {
+                    console.log('Response:', res);
+
+                    if (res.status == 1) {
                         $this.html("Shift Started Successfully...");
 
-                        // Wait for 5 seconds before hiding the button and showing end_shift
+                        // Update shift start time
+                        $("#shift_started_at").html("Shift Start At: " + res.start_time)
+                            .show();
+
                         setTimeout(function() {
                             $this.hide();
                             $("#end_shift").show();
-                            $("#shift_started_at").show();
                             $(".show-shift-details").show();
                         }, 1000);
+
+                        loadTable();
                     } else {
                         alert("Shift Not Started");
                         $this.html("Start Shift").prop("disabled", false);
@@ -499,30 +458,41 @@
                 }
             });
         });
-        $(document).on("click", "#end_shift", function() {
-            if (!confirm("Are you sure want to end the shift?")) {
-                return; // Stop execution if the user cancels
-            }
 
+        $(document).on("click", "#end_shift", function() {
             let $this = $(this);
             $this.html("Please wait...").prop("disabled", true);
 
+            var empid = $("#end_shift").data("id");
+
             $.ajax({
-                url: "ajax/shift_started",
-                type: "GET",
+                url: "ajax/end_shift",
+                type: "POST",
+                dataType: "json", // Expect JSON response
+                data: {
+                    Empid: empid
+                },
                 success: function(res) {
-                    if (res == 1) {
+                    console.log('Response:', res);
+
+                    if (res.status == 1) {
                         $this.html("Shift Ended Successfully...");
 
-                        // Wait for 1 second before hiding the button and showing the message
+                        // Update shift start time
+                        $("#shift_ended_at").html("|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift Ended At: " + res.end_time)
+                            .show();
+
                         setTimeout(function() {
                             $this.hide();
-                            $("#shift_ended_at").show();
+                            $(".show-shift-details").show();
                             $("#show-end-shift-message").show();
                         }, 1000);
+
+                        loadTable();
+                        
                     } else {
                         alert("Shift Not Ended");
-                        $this.html("End Shift").prop("disabled", false);
+                        $this.html("Start End").prop("disabled", false);
                     }
                 },
                 error: function() {
@@ -531,6 +501,7 @@
                 }
             });
         });
+
 
     });
     </script>

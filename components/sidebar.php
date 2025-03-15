@@ -142,7 +142,7 @@
                   <iconify-icon icon="solar:inbox-linear"></iconify-icon>
               </a>
               <!-- item-->
-              <a href="https://bootstrapdemos.wrappixel.com/monster/dist/minisidebar/authentication-login.html"
+              <a href="logout"
                   class="link" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
                   <iconify-icon icon="solar:power-bold"></iconify-icon>
               </a>

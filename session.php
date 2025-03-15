@@ -7,7 +7,7 @@
     $web_title="Dhothar International - Attendance System";
 
     if(!isset($_SESSION["login"])){
-        header("Location: login.php");
+        header("Location: login");
         exit();
     }
 
@@ -38,5 +38,10 @@
         date_default_timezone_set('Asia/Karachi'); // Set timezone to Pakistan
         return date('h:i A');
     }
+
+    function formatDate($date) {
+        return date("d-m-Y", strtotime($date));
+    }
+    
     
 ?>

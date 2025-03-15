@@ -1,6 +1,7 @@
 <?php
-    include("session.php");
+    session_start();
     $errormsg = "";
+    $con=mysqli_connect('localhost','root','','dhothar_attendance');
    
    if (isset($_POST['login'])) {
   
@@ -15,7 +16,7 @@
 
         $_SESSION['login'] = $email;
       
-      header("Location: index.php");
+      header("Location: index");
       
     }
     else {
@@ -40,7 +41,7 @@
     <!-- Core Css -->
     <link rel="stylesheet" href="assets/css/styles.css" />
 
-    <title><?=$web_title?></title>
+    <title>Dhothar Attendance System</title>
 </head>
 
 <body>
