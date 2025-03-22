@@ -29,8 +29,24 @@
         $empemail="mailid@domain.com";
     }
 
-    // Function Helper 
+    $sql2 = "SELECT * FROM settings";
+    $result2 = $con->query($sql2);
 
+    $settings_data = [];
+
+    if ($result2->num_rows > 0) {
+        while ($row2 = $result2->fetch_assoc()) {
+            $settings_data[$row2["meta_key"]] = $row2["meta_value"];
+        }
+    }
+
+    $total_working_hours = $settings_data["total_working_hours"] ?? null;
+    $break_timing = $settings_data["break_timing"] ?? null;
+    $break_time = $settings_data["break_time"] ?? null;
+    $officeIP = $settings_data["ip_address"] ?? null;
+    $official_working_hours = $settings_data["official_working_hours"] ?? null;
+
+    // Function Helper 
     function currentDate(){
         return date('Y-m-d');
     }
@@ -43,5 +59,15 @@
         return date("d-m-Y", strtotime($date));
     }
     
+
+    function getUserIP() {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+    }
     
 ?>

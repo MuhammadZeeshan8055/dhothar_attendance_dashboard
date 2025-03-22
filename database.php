@@ -106,43 +106,45 @@ class Database{
   }
 
   // Function to SELECT from the database
-	public function select($table, $rows="*",$join = null,$where = null,$order=null,$limit=null){
-     // Check to see if the table exists
-	   if($this->tableExists($table)){
-        // Create query from the variables passed to the function
-        $sql = "SELECT $rows FROM $table";
-        if($join != null){
-          $sql .= " JOIN $join";
-        }
-        if($where != null){
-          $sql .= " WHERE $where";
-        }
-        if($order != null){
-          $sql .= " ORDER BY $order";
-        }
-        if($limit != null){
-          if(isset($_GET['page'])){
-            $page = $_GET['page'];
-          }else{
-            $page = 1;
+  public function select($table, $rows="*", $join = null, $where = null, $order=null, $limit=null, $debug=false){
+      // Check if table exists
+      if ($this->tableExists($table)) {
+          // Build the SQL query
+          $sql = "SELECT $rows FROM $table";
+          if ($join != null) {
+              $sql .= " JOIN $join";
           }
-          $start = ($page - 1) * $limit;
-          $sql .= " LIMIT $start,$limit";
-        }
+          if ($where != null) {
+              $sql .= " WHERE $where";
+          }
+          if ($order != null) {
+              $sql .= " ORDER BY $order";
+          }
+          if ($limit != null) {
+              $page = isset($_GET['page']) ? $_GET['page'] : 1;
+              $start = ($page - 1) * $limit;
+              $sql .= " LIMIT $start, $limit";
+          }
 
-        $query = $this->mysqli->query($sql);
+          // **Print query only if debug is enabled**
+          if ($debug) {
+              echo "<pre>SQL Query: $sql</pre>";
+          }
 
-        if($query){
-          $this->result = $query->fetch_all(MYSQLI_ASSOC);
-          return true; // Query was successful
-        }else{
-          array_push($this->result, $this->mysqli->error);
-          return false; // No rows were returned
-        }
-     }else{
-       return false; // Table does not exist
-     }
+          $query = $this->mysqli->query($sql);
+
+          if ($query) {
+              $this->result = $query->fetch_all(MYSQLI_ASSOC);
+              return true; // Query was successful
+          } else {
+              array_push($this->result, $this->mysqli->error);
+              return false; // No rows returned
+          }
+      } else {
+          return false; // Table does not exist
+      }
   }
+
 
   // FUNCTION to show Pagination
   public function pagination($table,$join = null,$where = null,$limit=null){

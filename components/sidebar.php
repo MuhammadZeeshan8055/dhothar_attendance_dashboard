@@ -6,7 +6,7 @@
 
       <div>
           <div class="brand-logo d-flex align-items-center">
-              <a href="https://bootstrapdemos.wrappixel.com/monster/dist/minisidebar/index.html"
+              <a href="#"
                   class="text-nowrap logo-img">
                   <img src="assets/images//dhothar_logo.png" alt="Logo" class="dark-logo" height="80px" width="150px" />
                   <img src="assets/images//dhothar_logo.png" alt="Logo" class="light-logo" height="80px" width="150px" />
@@ -29,7 +29,7 @@
                           </div>
                           <!-- User profile text-->
                           <div class="profile-text py-2">
-                              <a href="javascript:void(0)">Zeeshan
+                              <a href="javascript:void(0)"><?=$name?>
                               </a>
                           </div>
                       </div>
@@ -88,7 +88,7 @@
 
                   <li class="sidebar-item">
                       <a class="sidebar-link"
-                          href="https://bootstrapdemos.wrappixel.com/monster/dist/minisidebar/app-invoice.html">
+                          href="app-invoice">
                           <iconify-icon icon="solar:bill-list-line-duotone"></iconify-icon>
                           <span class="hide-menu">Salary Slip</span>
                       </a>
@@ -102,16 +102,23 @@
                       <ul aria-expanded="false" class="collapse first-level">
                           <li class="sidebar-item">
                               <a class="sidebar-link"
-                                  href="https://bootstrapdemos.wrappixel.com/monster/dist/minisidebar/blog-posts.html">
+                                  href="#">
                                   <span class="icon-small"></span>
-                                  <span class="hide-menu">Blog Posts</span>
+                                  <span class="hide-menu">Applied Leaves</span>
                               </a>
                           </li>
                           <li class="sidebar-item">
                               <a class="sidebar-link"
-                                  href="https://bootstrapdemos.wrappixel.com/monster/dist/minisidebar/blog-detail.html">
+                                  href="#">
                                   <span class="icon-small"></span>
-                                  <span class="hide-menu">Blog Details</span>
+                                  <span class="hide-menu">Approved Leaves</span>
+                              </a>
+                          </li>
+                          <li class="sidebar-item">
+                              <a class="sidebar-link"
+                                  href="#">
+                                  <span class="icon-small"></span>
+                                  <span class="hide-menu">Declined Leaves</span>
                               </a>
                           </li>
 
@@ -120,10 +127,18 @@
 
                   <li class="sidebar-item">
                       <a class="sidebar-link"
-                          href="https://bootstrapdemos.wrappixel.com/monster/dist/minisidebar/page-user-profile.html"
+                          href="#"
                           aria-expanded="false">
                           <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
                           <span class="hide-menu">User Profile</span>
+                      </a>
+                  </li>
+                  <li class="sidebar-item">
+                      <a class="sidebar-link"
+                          href="settings"
+                          aria-expanded="false">
+                          <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
+                          <span class="hide-menu">Settings</span>
                       </a>
                   </li>
 
@@ -132,20 +147,20 @@
 
           <div class="sidebar-footer hide-menu">
               <!-- item-->
-              <a href="https://bootstrapdemos.wrappixel.com/monster/dist/minisidebar/page-account-settings.html"
+              <!-- <a href="https://bootstrapdemos.wrappixel.com/monster/dist/minisidebar/page-account-settings.html"
                   class="link" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
                   <iconify-icon icon="solar:settings-linear"></iconify-icon>
-              </a>
+              </a> -->
               <!-- item-->
-              <a href="https://bootstrapdemos.wrappixel.com/monster/dist/minisidebar/app-email.html" class="link"
+              <!-- <a href="https://bootstrapdemos.wrappixel.com/monster/dist/minisidebar/app-email.html" class="link"
                   data-bs-toggle="tooltip" data-bs-placement="top" title="Email">
                   <iconify-icon icon="solar:inbox-linear"></iconify-icon>
-              </a>
+              </a> -->
               <!-- item-->
-              <a href="logout"
+              <!-- <a href="logout"
                   class="link" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout">
                   <iconify-icon icon="solar:power-bold"></iconify-icon>
-              </a>
+              </a> -->
           </div>
       </div>
   </aside>

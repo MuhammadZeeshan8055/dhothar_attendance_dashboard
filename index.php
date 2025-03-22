@@ -303,32 +303,30 @@
                                 <div class="card-body">
                                     <div class="d-md-flex no-block">
                                         <div>
-                                            <h4 class="card-title">Attendance Report</h4>
-
-                                            <!-- <p class="card-subtitle">Total Working Hours <span>09</span></p>
-                                            <br>
-                                            <p class="card-subtitle">Break Time <span>( 1:30PM - 2:30PM )</span></p>
-                                            <br>
-                                            <p class="card-subtitle">Total Working Hours ( 09 ) - with 1 hour.</p> -->
+                                            <h4 class="card-title">Attendance Report <?=$current_year = date("Y");?></h4>
 
                                             <table class="table mb-0 align-middle text-nowrap">
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            <p class="card-subtitle">Total Working Hours <span>09</span>
+                                                            <p class="card-subtitle">Total Working Hours <span><?=$total_working_hours?></span>
                                                             </p>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <p class="card-subtitle">Break Time <span>( 1:30PM - 2:30PM
-                                                                    )</span></p>
+                                                            <p class="card-subtitle">Break Timings <span> ( <?=$break_timing?> )</span></p>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <p class="card-subtitle">Total Working Hours ( 09 ) - with 1
+                                                            <p class="card-subtitle">Total Working Hours ( <?=$total_working_hours?> ) - with <?=$break_time?>
                                                                 hour Break Time.</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <p class="card-subtitle">Official Working Hours ( <?=$official_working_hours?> )</p>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -337,11 +335,23 @@
 
                                         </div>
                                         <div class="ms-auto">
-                                            <select class="form-select">
-                                                <option selected="">November</option>
-                                                <option value="1">February</option>
-                                                <option value="2">May</option>
-                                                <option value="3">April</option>
+                                            <select class="form-select" id="monthSelect">
+                                                <?php
+                                                    $current_month = date("F"); // Returns full month name (e.g., "March")
+                                                ?>
+                                                <option selected="<?= $current_month ?>"><?= $current_month ?></option>
+                                                <option value="January">January</option>
+                                                <option value="February">February</option>
+                                                <option value="March">March</option>
+                                                <option value="April">April</option>
+                                                <option value="May">May</option>
+                                                <option value="June">June</option>
+                                                <option value="July">July</option>
+                                                <option value="August">August</option>
+                                                <option value="September">September</option>
+                                                <option value="October">October</option>
+                                                <option value="November">November</option>
+                                                <option value="December">December</option>
                                             </select>
                                         </div>
                                     </div>
@@ -394,12 +404,32 @@
     <script>
     $(document).ready(function() {
 
-        function loadTable() {
-            $("#attendance_record").html('<div class="loader">Loading Data...</div>'); // Show loader before AJAX call
+        // function loadTable() {
+        //     $("#attendance_record").html('<div class="loader">Loading Data...</div>'); // Show loader before AJAX call
         
+        //     $.ajax({
+        //         url: "emp_attendance_record",
+        //         type: "POST",
+        //         success: function (data) {
+        //             $("#attendance_record").html(data); // Replace loader with table data
+        //         },
+        //         error: function () {
+        //             $("#attendance_record").html("<p>Error loading data.</p>"); // Handle errors
+        //         }
+        //     });
+        // }
+        
+        // // Load Table Records on Page Load
+        // loadTable();
+
+        function loadTable(month = null) {
+            $("#attendance_record").html('<div class="loader">Loading Data...</div>'); // Show loader before AJAX call
+
+            // alert(month);
             $.ajax({
                 url: "emp_attendance_record",
                 type: "POST",
+                data: { month: month }, // Send selected month if available
                 success: function (data) {
                     $("#attendance_record").html(data); // Replace loader with table data
                 },
@@ -408,9 +438,16 @@
                 }
             });
         }
-        
-        // Load Table Records on Page Load
-        loadTable();
+
+        // Load Table Records on Page Load with Current Month
+        loadTable($("#monthSelect").val());
+
+        // Fetch Data When Month Changes
+        $("#monthSelect").change(function () {
+            let selectedMonth = $(this).val();
+            loadTable(selectedMonth);
+        });
+
 
         $("#show-salary").on("click", function() {
             $("#salary").show(); // Show the salary
@@ -422,6 +459,7 @@
             $this.html("Please wait...").prop("disabled", true);
 
             var empid = $("#start_shift").data("id");
+            var selectedMonth = $("#monthSelect").val(); // Get the currently selected month
 
             $.ajax({
                 url: "ajax/shift_started",
@@ -446,8 +484,13 @@
                             $(".show-shift-details").show();
                         }, 1000);
 
-                        loadTable();
-                    } else {
+                        // Call loadTable with the selected month to refresh the records
+                        loadTable(selectedMonth);
+                    }else if(res.status == 2) {
+                        alert("A shift must be started from the office.");
+                        $this.html("Start Shift").prop("disabled", false);
+                    }
+                    else {
                         alert("Shift Not Started");
                         $this.html("Start Shift").prop("disabled", false);
                     }
@@ -459,11 +502,13 @@
             });
         });
 
+
         $(document).on("click", "#end_shift", function() {
             let $this = $(this);
             $this.html("Please wait...").prop("disabled", true);
 
             var empid = $("#end_shift").data("id");
+            var selectedMonth = $("#monthSelect").val(); // Get the currently selected month
 
             $.ajax({
                 url: "ajax/end_shift",
@@ -488,9 +533,12 @@
                             $("#show-end-shift-message").show();
                         }, 1000);
 
-                        loadTable();
+                        loadTable(selectedMonth);
                         
-                    } else {
+                    }else if(res.status == 2){
+                        alert("A shift must be end from the office.");
+                        $this.html("Start Shift").prop("disabled", false);
+                    }else {
                         alert("Shift Not Ended");
                         $this.html("Start End").prop("disabled", false);
                     }
