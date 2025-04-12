@@ -1,5 +1,12 @@
 <?php
     include("session.php");
+
+    $obj = new Database();
+
+    $companyName = "*";
+    
+    $obj->select('company',$companyName,null,null,null,0);
+      $company_names = $obj->getResult();
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
@@ -16,7 +23,8 @@
     <link rel="shortcut icon" type="image/png" href="assets/images/favicon.png" />
 
     <!-- Core Css -->
-    <link rel="stylesheet" href="https://bootstrapdemos.wrappixel.com/monster/dist/assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/custom.css" />
 
     <title><?=$web_title?></title>
 </head>
@@ -53,10 +61,18 @@
                         </div>
                         <div class="d-flex align-items-center justify-content-between gap-6">
                             <select class="form-select border fs-3" aria-label="Default select example">
-                                <option selected>November 2024</option>
-                                <option value="1">February 2024</option>
-                                <option value="2">March 2024</option>
-                                <option value="3">April 2024</option>
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
                             </select>
                             <button class="btn btn-success d-flex align-items-center gap-1 fs-3 py-2 px-9">
                                 <i class="ti ti-plus fs-4"></i>
@@ -64,6 +80,28 @@
                             </button>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="company-list">
+                                    <div class="form-group">
+                                    <select name="company_list" id="company_list" class="form-control">
+                                            <?php
+                                                    foreach ($company_names as list("id"=>$id,"company_name"=>$company_name)) {
+                                                ?>
+
+                                                        <option value="<?=$company_name?>"><?=$company_name?></option>
+
+                                                <?php
+                                                    }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card overflow-hidden invoice-application">
                         <div class="d-flex align-items-center justify-content-between gap-6 m-3 d-lg-none">
                             <button class="btn btn-primary d-flex" type="button" data-bs-toggle="offcanvas"
@@ -189,7 +227,7 @@
                                 <div class="invoice-inner-part h-100">
                                     <div class="invoiceing-box">
                                         <div class="invoice-header d-flex align-items-center border-bottom p-3">
-                                            <h4 class=" text-uppercase mb-0">Invoice</h4>
+                                            <h4 class=" text-uppercase mb-0">Salary Slip</h4>
                                             <div class="ms-auto">
                                                 <h4 class="invoice-number"></h4>
                                             </div>
@@ -198,10 +236,17 @@
                                             <div class="invoice-123" id="printableArea">
                                                 <div class="row pt-3">
                                                     <div class="col-md-12">
+                                                        <div class="logo-image-wrapper">
+                                                            <img src="assets/images/dhothar_logo.png" width="185"
+                                                                alt="">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 pt-3">
                                                         <div>
                                                             <address>
                                                                 <h6>&nbsp;From,</h6>
-                                                                <h6 class="fw-bold">&nbsp;Steve Jobs</h6>
+                                                                <h6 class="fw-bold">&nbsp;Dhothar International Pakistan
+                                                                </h6>
                                                                 <p class="ms-1">
                                                                     1108, Clair Street,
                                                                     <br />Massachusetts,
@@ -213,7 +258,7 @@
                                                             <address>
                                                                 <h6>To,</h6>
                                                                 <h6 class="fw-bold invoice-customer">
-                                                                    James Anderson,
+                                                                    M Zeeshan,
                                                                 </h6>
                                                                 <p class="ms-4">
                                                                     455, Shobe Lane,
@@ -239,63 +284,53 @@
                                                             <table class="table table-hover">
                                                                 <thead>
                                                                     <!-- start row -->
-                                                                    <tr>
+                                                                    <!-- <tr>
                                                                         <th class="text-center">#</th>
                                                                         <th>Description</th>
                                                                         <th class="text-end">Quantity</th>
                                                                         <th class="text-end">Unit Cost</th>
                                                                         <th class="text-end">Total</th>
-                                                                    </tr>
+                                                                    </tr> -->
                                                                     <!-- end row -->
                                                                 </thead>
                                                                 <tbody>
                                                                     <!-- start row -->
                                                                     <tr>
                                                                         <td class="text-center">1</td>
-                                                                        <td>Milk Powder</td>
-                                                                        <td class="text-end">2</td>
-                                                                        <td class="text-end">$24</td>
-                                                                        <td class="text-end">$48</td>
+                                                                        <td>Basic Salary</td>
+                                                                        <td class="text-end">20000</td>
                                                                     </tr>
                                                                     <!-- end row -->
                                                                     <!-- start row -->
                                                                     <tr>
                                                                         <td class="text-center">2</td>
-                                                                        <td>Air Conditioner</td>
-                                                                        <td class="text-end">5</td>
-                                                                        <td class="text-end">$500</td>
-                                                                        <td class="text-end">$2500</td>
+                                                                        <td>Bonus</td>
+                                                                        <td class="text-end">5000</td>
                                                                     </tr>
                                                                     <!-- end row -->
                                                                     <!-- start row -->
                                                                     <tr>
                                                                         <td class="text-center">3</td>
-                                                                        <td>RC Cars</td>
-                                                                        <td class="text-end">30</td>
-                                                                        <td class="text-end">$600</td>
-                                                                        <td class="text-end">$18000</td>
+                                                                        <td>
+                                                                            Unpaid Leave
+
+                                                                            <div class="unpaid-details pt-3">
+                                                                                <p>(1 Day Leave) - 1500 </p>
+                                                                                <p>(3 Hours Short) - 500</p>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="text-end text-danger">-2000</td>
                                                                     </tr>
                                                                     <!-- end row -->
-                                                                    <!-- start row -->
-                                                                    <tr>
-                                                                        <td class="text-center">4</td>
-                                                                        <td>Down Coat</td>
-                                                                        <td class="text-end">62</td>
-                                                                        <td class="text-end">$5</td>
-                                                                        <td class="text-end">$310</td>
-                                                                    </tr>
-                                                                    <!-- end row -->
+
                                                                 </tbody>
                                                             </table>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="pull-right mt-4 text-end">
-                                                            <p>Sub - Total amount: $20,858</p>
-                                                            <p>vat (10%) : $2,085</p>
-                                                            <hr />
                                                             <h3>
-                                                                <b>Total :</b> $22,943
+                                                                <b>Total :</b> 23000 PKR
                                                             </h3>
                                                         </div>
                                                         <div class="clearfix"></div>

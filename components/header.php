@@ -405,10 +405,10 @@
                         <div class="d-flex align-items-center py-9 mx-7 border-bottom">
                           <img src="https://bootstrapdemos.wrappixel.com/monster/dist/assets/images/profile/user-1.jpg" class="rounded-circle" width="80" height="80" alt="" />
                           <div class="ms-3">
-                            <h5 class="mb-1 fs-4"><?=$name?></h5>
+                            <h5 class="mb-1 fs-4"><?=$curr_emp_name?></h5>
                             <!-- <span class="mb-1 d-block">Designer</span> -->
                             <p class="mb-0 d-flex align-items-center gap-2">
-                              <i class="ti ti-mail fs-4"></i> <?=$empemail?>
+                              <i class="ti ti-mail fs-4"></i> <?=$curr_emp_email?>
                             </p>
                           </div>
                         </div>

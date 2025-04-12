@@ -20,13 +20,25 @@
     // output data of each row
     while($row = $result->fetch_assoc()) {
         $empid=$row["id"];
-        $name = $row["name"];
-        $empemail=$row["email"];
+        $curr_emp_name = $row["name"];
+        $curr_emp_email=$row["email"];
+        $curr_emp_company=$row["company"];
+        $curr_emp_designation=$row["designation"];
+        $curr_emp_date_of_joining=$row["date_of_joining"];
+        $curr_emp_salary=$row["salary"];
+        $curr_emp_cnic_passport=$row["cnic_passport"];
+        $curr_emp_permanent_address=$row["permanent_address"];
+        $curr_emp_country=$row["country"];
+        $curr_emp_phone_1=$row["phone_1"];
+        $curr_emp_phone_2=$row["phone_2"];
+        $curr_emp_bank_name=$row["bank_name"];
+        $curr_emp_account_title=$row["account_title"];
+        $curr_emp_iban=$row["iban"];
     }
     } else {
         $empid="GHX1Y2";
         $username ="Jhon Doe";
-        $empemail="mailid@domain.com";
+        $emp_email="mailid@domain.com";
     }
 
     $sql2 = "SELECT * FROM settings";

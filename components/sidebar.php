@@ -29,7 +29,7 @@
                           </div>
                           <!-- User profile text-->
                           <div class="profile-text py-2">
-                              <a href="javascript:void(0)"><?=$name?>
+                              <a href="javascript:void(0)"><?=$curr_emp_name?>
                               </a>
                           </div>
                       </div>
@@ -61,7 +61,7 @@
                   <!-- Dashboard -->
                   <!-- ---------------------------------- -->
                   <li class="sidebar-item">
-                      <a class="sidebar-link" href="#" id="get-url" aria-expanded="false">
+                      <a class="sidebar-link" href="employee" id="get-url" aria-expanded="false">
                           <iconify-icon icon="solar:screencast-2-linear"></iconify-icon>
                           <span class="hide-menu">Employee</span>
                       </a>
@@ -69,15 +69,29 @@
 
                   <li class="nav-small-cap">
                       <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
-                      <span class="hide-menu">Departments</span>
+                      <span class="hide-menu">Company</span>
                   </li>
                   <!-- ---------------------------------- -->
                   <!-- Dashboard -->
                   <!-- ---------------------------------- -->
                   <li class="sidebar-item">
-                      <a class="sidebar-link" href="#" id="get-url" aria-expanded="false">
+                      <a class="sidebar-link" href="company" id="get-url" aria-expanded="false">
                           <iconify-icon icon="solar:screencast-2-linear"></iconify-icon>
-                          <span class="hide-menu">Departments</span>
+                          <span class="hide-menu">Company</span>
+                      </a>
+                  </li>
+
+                  <li class="nav-small-cap">
+                      <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
+                      <span class="hide-menu">Report</span>
+                  </li>
+                  <!-- ---------------------------------- -->
+                  <!-- Dashboard -->
+                  <!-- ---------------------------------- -->
+                  <li class="sidebar-item">
+                      <a class="sidebar-link" href="attendance_report" id="get-url" aria-expanded="false">
+                          <iconify-icon icon="solar:screencast-2-linear"></iconify-icon>
+                          <span class="hide-menu">Attendance Report</span>
                       </a>
                   </li>
 
@@ -92,6 +106,11 @@
                           <iconify-icon icon="solar:bill-list-line-duotone"></iconify-icon>
                           <span class="hide-menu">Salary Slip</span>
                       </a>
+                  </li>
+
+                  <li class="nav-small-cap">
+                      <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
+                      <span class="hide-menu">Leave</span>
                   </li>
 
                   <li class="sidebar-item">
@@ -124,7 +143,10 @@
 
                       </ul>
                   </li>
-
+                  <li class="nav-small-cap">
+                      <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
+                      <span class="hide-menu">Profile</span>
+                  </li>
                   <li class="sidebar-item">
                       <a class="sidebar-link"
                           href="#"
@@ -132,6 +154,10 @@
                           <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
                           <span class="hide-menu">User Profile</span>
                       </a>
+                  </li>
+                  <li class="nav-small-cap">
+                      <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
+                      <span class="hide-menu">Setting</span>
                   </li>
                   <li class="sidebar-item">
                       <a class="sidebar-link"

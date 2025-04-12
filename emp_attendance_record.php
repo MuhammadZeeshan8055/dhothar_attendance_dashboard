@@ -33,7 +33,7 @@ if (!empty($result)) {
         $hours = (int)$parts[0]; // assumes the first part is the hours number
 
         // Set the style if worked hours are below 9
-        $rowStyle = ($hours < 9) ? 'style="color: red;"' : '';
+        $rowStyle = ($hours < $official_working_hours) ? 'style="color: red;"' : '';
 
         $output .= '<tr ' . $rowStyle . '>
                         <td ' . $rowStyle . ' class="ps-0 fs-3">' . formatDate($shift_date) . '</td>
