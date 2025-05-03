@@ -71,7 +71,7 @@
                         <div class="col-sm-6 col-lg-3">
                             <div class="card bg-box position-relative text-bg-info">
                                 <div class="card-body text-center">
-                                    <h2 class="fw-medium fs-8 text-white">10</h2>
+                                    <h2 class="fw-medium fs-8 text-white"><?php echo $count = $obj->count('employee_info', 'id', null); ?></h2>
                                     <h6 class="text-white mb-0 fw-medium">Total Employees</h6>
                                 </div>
                             </div>
@@ -79,7 +79,7 @@
                         <div class="col-sm-6 col-lg-3">
                             <div class="card bg-box position-relative text-bg-secondary">
                                 <div class="card-body text-center">
-                                    <h2 class="fw-medium fs-8 text-white">5</h2>
+                                    <h2 class="fw-medium fs-8 text-white"><?php echo $count = $obj->count('company', 'id', null); ?></h2>
                                     <h6 class="text-white mb-0 fw-medium">Companies</h6>
                                 </div>
                             </div>
@@ -100,7 +100,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-5">
                             <div class="card w-100">
                                 <div class="card-body">
                                     <div class="d-md-flex no-block">
@@ -190,7 +190,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-7">
                             <div class="card w-100">
                                 <div class="card-body"
                                     style="display: flex;flex-direction: column;align-items: center;">

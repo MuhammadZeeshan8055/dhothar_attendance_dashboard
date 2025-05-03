@@ -16,15 +16,21 @@
             $msg="Data Not Deleted";
         }
     }
-
-
-    $colName = "employee_info.id,employee_info.name,employee_info.email,employee_info.company,employee_info.salary,company.company_name";
-    $join = 'company ON company.id = employee_info.company';
+    $company = "";
+    if (isset($_GET['company'])) {
+        $company = trim($_GET['company']); // Optional: trim spaces
+    }
+    
+    $company = !empty($company) ? $company : '';
+    
+    $colName = "employee_info.id, employee_info.name, employee_info.email, employee_info.company, employee_info.salary, company.company_name";
+    $where = !empty($company) ? "company.company_name = '$company'" : "1"; // Default to 1 if empty to avoid WHERE error
+    $join = "company ON company.id = employee_info.company";
     $limit = 0;
     
-    $obj->select('employee_info',$colName,$join,null,null,$limit);
-        $result = $obj->getResult();
-
+    $obj->select('employee_info', $colName, $join, $where, null, $limit);
+    $result = $obj->getResult();
+    
     $companyName = "*";
     
     $obj->select('company',$companyName,null,null,null,0);
@@ -87,35 +93,37 @@
                     <!-- Row -->
 
                     <div class="row">
-                    <div class="col-md-6">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="company-list">
-                                    <div class="form-group">
-                                        <select name="company_list" id="company_list" class="form-control">
-                                            <?php
-                                                      
-                                                            foreach ($company_names as list("id"=>$id,"company_name"=>$company_name)) {
-                                                               
-                                                        ?>
-
-                                            <option value="<?=$company_name?>"><?=$company_name?></option>
-
-                                            <?php
-                                                            }
-                                                        ?>
-                                        </select>
-                                    </div>
+                                    <form method="GET" id="companyForm">
+                                        <div class="form-group">
+                                            <select name="company" id="company_list" class="form-control"
+                                                onchange="document.getElementById('companyForm').submit()">
+                                                <option value="">-- Select Company --</option>
+                                                <?php
+                                                    for ($i = 0; $i < count($company_names); $i++) {
+                                                        $id = $company_names[$i]['id'];
+                                                        $company_name = $company_names[$i]['company_name'];
+                                                        $selected = (isset($_GET['company']) && $_GET['company'] == $company_name) ? "selected" : "";
+                                                        echo "<option value=\"$company_name\" $selected>$company_name</option>";
+                                                    }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
                     <div class="row">
-                        
+
                         <div class="col-md-6">
-                            
+
                             <a href="add_employee" class="btn btn-success">Add Employee</a>
-                               
+
                         </div>
 
                         <?php if (!empty($msg)) : ?>
@@ -148,29 +156,40 @@
                                         <tbody>
                                             <?php
                                                 $i=0;
-                                                foreach ($result as 
-                                                list("id"=>$id,"name"=>$name,"email"=>$email,
-                                                "company"=>$company,"salary"=>$salary,'company_name'=>$company)) {
-                                                    $i++;
-                                            ?>
-                                            <tr>
-                                                <td><?=$i?></td>
-                                                <td><?=$name?></td>
-                                                <td><?=$email?></td>
-                                                <td><?=$company?></td>
-                                                <td><?=$salary?></td>
-                                                <td>
-                                                    <a href="add_employee?id=<?= $id ?>"
-                                                        class="btn btn-primary">Edit</a>
-                                                    <a href="employee?id=<?= urlencode($id) ?>&type=Delete"
-                                                        class="btn btn-danger"
-                                                        onclick="return confirm('Are you sure you want to delete this employee?');">
-                                                        Delete
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <?php
+                                                if(!empty($result)){
+                                                    foreach ($result as 
+                                                        list("id"=>$id,"name"=>$name,"email"=>$email,
+                                                        "company"=>$company,"salary"=>$salary,'company_name'=>$company)) {
+                                                            $i++;
+                                                    ?>
+                                                    <tr>
+                                                        <td><?=$i?></td>
+                                                        <td><?=$name?></td>
+                                                        <td><?=$email?></td>
+                                                        <td><?=$company?></td>
+                                                        <td><?=$salary?></td>
+                                                        <td>
+                                                            <a href="add_employee?id=<?= $id ?>"
+                                                                class="btn btn-primary">Edit</a>
+                                                            <a href="employee?id=<?= urlencode($id) ?>&type=Delete"
+                                                                class="btn btn-danger"
+                                                                onclick="return confirm('Are you sure you want to delete this employee?');">
+                                                                Delete
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                        }
+                                                }else{
+                                                    ?>
+
+                                                    <tr>
+                                                        <td class="text-center" colspan="6">No Employee Record Found for this Company</td>
+                                                    </tr>
+
+                                                    <?php
                                                 }
+                                                
                                             ?>
                                         </tbody>
                                     </table>

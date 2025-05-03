@@ -51,6 +51,27 @@ class Database{
 		return $this->mysqli->insert_id;
 	}
 
+  public function count($table, $column = '*', $where = null) {
+      if ($this->tableExists($table)) {
+          $sql = "SELECT COUNT($column) AS total FROM $table";
+          if ($where != null) {
+              $sql .= " WHERE $where";
+          }
+
+          $query = $this->mysqli->query($sql);
+
+          if ($query) {
+              $result = $query->fetch_assoc();
+              return $result['total']; // Return the count value
+          } else {
+              array_push($this->result, $this->mysqli->error);
+              return false;
+          }
+      } else {
+          return false; // Table does not exist
+      }
+  }
+
 	// Function to count rows returned
 	public function numRows($sql){
 		$query = $this->mysqli->query($sql);
