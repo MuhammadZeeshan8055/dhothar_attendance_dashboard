@@ -2,41 +2,57 @@
   include("session.php");
   $obj = new Database();
 
-    $id=$_GET['id'];
-
-    
-    if(isset($_GET['month'])){
-        $month_record=$_GET['month'];
-    }else{
-        $month_record=date('F');
-    }
-
-    $where = "emp_id='$id' and month = '$month_record'"; // Match the exact month name
-    $limit = 0;
-
-    $obj->select('attendance_record', "*", null, $where, null, null);
-    $result = $obj->getResult();
-
-
-    $employee_colName = "name"; // Select all columns
-    $employee_where   = "id = $id"; // Adjust your condition accordingly
-    
-    
-    $obj->select('employee_info',$employee_colName,null,$employee_where,null,0);
-    $employee_result = $obj->getResult();
-    
-    $employee = $employee_result[0];
-
-    $employee_name = $employee['name'];
-
-
-
-
+  // Get employee ID from URL parameter
+  $id = $_GET['id'];
+  
+  // Determine month (default to current month if not specified)
+  if(isset($_GET['month'])){
+      $month_name = $_GET['month'];
+  } else {
+      $month_name = date('F');
+  }
+  
+  // Convert month name to number
+  $month_num = date('n', strtotime($month_name));
+  $year = date('Y');
+  
+  // Compute how many days to loop
+  $firstOfMonth = "$year-$month_num-01";
+  $totalInMonth = date('t', strtotime($firstOfMonth));
+  $isCurrent = ($year == date('Y') && $month_num == date('n'));
+  $lastDayToShow = $isCurrent ? date('j') : $totalInMonth;
+  
+  // Fetch employee name
+  $employee_colName = "name";
+  $employee_where = "id = $id";
+  $obj->select('employee_info', $employee_colName, null, $employee_where, null, 0);
+  $employee_result = $obj->getResult();
+  $employee_name = $employee_result[0]['name'];
+  
+  // Fetch all records for this employee and month
+  $where = "
+      emp_id = '{$id}'
+      AND YEAR(shift_date) = {$year}
+      AND MONTH(shift_date) = {$month_num}
+  ";
+  $obj->select('attendance_record', '*', null, $where);
+  $rows = $obj->getResult();
+  
+  // Index rows by normalized date string
+  $byDate = [];
+  foreach ($rows as $r) {
+      $key = date('Y-m-d', strtotime($r['shift_date']));
+      $byDate[$key] = $r;
+  }
+  
+  // Prepare totals logic
+  $hoursPerDay = $total_working_hours;
+  $workingDays = getWorkingDaysInMonth($year, $month_num);
+  $totalHoursNeeded = getWorkingHoursInMonth($year, $month_num, $hoursPerDay);
+  $totalWorked = calculateEmployeeWorkedHours($id, $month_name, $obj);
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
-
-
 
 <head>
     <!-- Required meta tags -->
@@ -93,7 +109,6 @@
                                 </ol>
                             </nav>
                         </div>
-
                     </div>
 
                     <div class="row">
@@ -105,7 +120,7 @@
 
                                         <select name="month" class="form-select" id="monthSelect"
                                             onchange="this.form.submit()">
-                                            <option selected value="<?= $month_record ?>"><?= $month_record ?>
+                                            <option selected value="<?= $month_name ?>"><?= $month_name ?>
                                             </option>
                                             <option value="January">January</option>
                                             <option value="February">February</option>
@@ -128,15 +143,12 @@
 
                     <div class="row">
                         <div class="col-md-6">
-
-                            <h3><?=$employee_name?> Attendance Record (<?=$month_record?>)</h3>
-
+                            <h3><?=$employee_name?> Attendance Record (<?=$month_name?>)</h3>
                         </div>
                     </div>
 
                     <!-- Row -->
                     <div class="row">
-
                         <div class="col-12">
                             <div class="card-body pt-8">
                                 <div class="table-responsive">
@@ -152,58 +164,110 @@
                                             </thead>
                                         </tr>
                                         <tbody>
-                                            <?php
-                                            if (!empty($result)) {
-                                                $i=0;
-                                                foreach ($result as 
-                                                list("id"=>$id,"shift_date"=>$shift_date,"start_time"=>$start_time,
-                                                "end_time"=>$end_time,"worked_hours"=>$worked_hours,'overtime'=>$overtime)) {
-                                                    $i++;
+                                        <?php
+                                        $countDays = 0;
+                                        $countLeaves = 0;
+                                        $total_seconds = 0;
 
-                                                    $parts = explode(' ', $worked_hours);
-                                                    $hours = (int)$parts[0]; // assumes the first part is the hours number
-                                            
-                                                    // Set the style if worked hours are below 9
-                                                    $rowStyle = ($hours < $official_working_hours) ? 'class="red-text"' : 'class="green-text"';
-                                            ?>
-                                            <tr <?=$rowStyle?>>
-                                                <td><?=$i?></td>
-                                                <td><?=formatDate($shift_date)?></td>
-                                                <td><?=$start_time?></td>
-                                                <td><?=$end_time?></td>
-                                                <td><?=$worked_hours?></td>
-                                                <td><?=$overtime?></td>
-                                            </tr>
+                                        // Loop through each day
+                                        $i = 0;
+                                        for ($d = 1; $d <= $lastDayToShow; $d++) {
+                                            // normalize to YYYY-MM-DD
+                                            $current = date('Y-m-d', strtotime("$year-$month_num-$d"));
+                                            $weekday = date('w', strtotime($current)); // 0 = Sunday
 
-
-                                            <?php
-                                                }
-                                            }else{
-                                                ?>
-                                                
-                                            <tr>
-                                                <td class="text-danger text-center" colspan="6"><strong>No Record Found For This Month</strong></td>
-                                            </tr>
-
-                                                <?php
+                                            // Sunday holiday
+                                            if ($weekday === '0') {
+                                                $i++;
+                                                echo '<tr style="background:#f9f9f9;">
+                                                        <td>' . $i . '</td>
+                                                        <td>'. formatDate($current) .'</td>
+                                                        <td colspan="4" class="text-center">Holiday</td>
+                                                      </tr>';
+                                                continue;
                                             }
-                                            ?>
+
+                                            // If we have a record for this date
+                                            if (isset($byDate[$current])) {
+                                                extract($byDate[$current]);
+                                                $i++;
+                                                
+                                                                                                
+                                                // Check against official hours for styling
+                                                $parts = explode(' ', $worked_hours);
+                                                $hrs = (int)$parts[0]; // Assumes first part is hours
+                                                $rowStyle = ($hrs < $official_working_hours) ? 'class="red-text"' : 'class="green-text"';
+                                                $countDays ++;
+                                                echo "<tr {$rowStyle}>
+                                                        <td>{$i}</td>
+                                                        <td>" . formatDate($shift_date) . "</td>
+                                                        <td>{$start_time}</td>
+                                                        <td>{$end_time}</td>
+                                                        <td>{$worked_hours}</td>
+                                                        <td>{$overtime}</td>
+                                                      </tr>";
+                                            } else {
+                                                // No record: empty row
+                                                $countLeaves++;
+                                                $i++;
+
+                                                echo "<tr class=\"red-text\">
+                                                        <td>{$i}</td>
+                                                        <td>" . formatDate($current) . "</td>
+                                                        <td>--</td>
+                                                        <td>--</td>
+                                                        <td>--</td>
+                                                        <td>--</td>
+                                                      </tr>";
+                                            }
+                                        }
+
+                                        ?>
+                                            
+                                            <tr>
+                                                <td colspan="4" class="text-end"><strong>Total Worked Hours:</strong></td>
+                                                <td colspan="2"><strong><?=$totalWorked?></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                Total Leaves <span class="text-danger"> ( <?=$countLeaves?> )  </span> Days.
+                                                </td>
+                                                <td colspan="2" class="text-end">
+                                                <?=$employee_name?> has Worked ( <?=$countDays?> ) Days.
+                                                </td>
+                                                <td colspan="3">
+                                                <?=$employee_name?> has Worked <br> ( <?=$totalWorked?> ) <br> Hours, Minutes.
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3" class="text-end">
+                                                <?=$employee_name?> need to have at-least
+                                                </td>
+                                                <td colspan="3">
+                                                ( <?=$totalHoursNeeded?> ) <br> Working Hours.
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                Official Working Days :
+                                                </td>
+                                                <td><?=$workingDays?></td>
+                                                <td colspan="3">
+                                                Official Working Hours <br> : <?=$totalHoursNeeded?> H
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     <!-- End Row -->
                 </div>
             </div>
-
         </div>
-
-
-
     </div>
+
     <div class="dark-transparent sidebartoggler"></div>
     <!-- Import Js Files -->
     <script
@@ -221,7 +285,4 @@
     <!-- solar icons -->
     <script src="../../../../cdn.jsdelivr.net/npm/iconify-icon%401.0.8/dist/iconify-icon.min.js"></script>
 </body>
-
-
-
 </html>

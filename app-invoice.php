@@ -10,9 +10,31 @@
 
     $company = !empty($company) ? $company : '';
     
-    $colName = "employee_info.id, employee_info.name, employee_info.email, employee_info.company, employee_info.salary, company.company_name";
-    $where = !empty($company) ? "company.company_name = '$company'" : "1"; // Default to 1 if empty to avoid WHERE error
-    $join = "company ON company.id = employee_info.company";
+    if(empty($_GET['month'])){
+        $month = date('F', strtotime('first day of last month'));;
+    }else{
+        $month = $_GET['month'];
+    }
+    $colName = "
+        employee_info.id,
+        employee_info.name,
+        employee_info.email,
+        employee_info.company,
+        employee_info.salary,
+        company.company_name,
+        attendance_summary.*,
+        salary_sheet.*
+    ";
+
+    // $where = !empty($company) ? "company.company_name = '$company'" : "1";
+    $where = "company.company_name = '$company' AND salary_sheet.month = '$month' AND attendance_summary.month = '$month'";
+
+    $join = "
+        company ON company.id = employee_info.company
+        INNER JOIN salary_sheet ON salary_sheet.emp_id = employee_info.id
+        INNER JOIN attendance_summary ON attendance_summary.emp_id = employee_info.id
+    ";
+
     $limit = 0;
 
     $obj->select('employee_info', $colName, $join, $where, null, $limit);
@@ -78,6 +100,13 @@
                         </div>
                         <div class="d-flex align-items-center justify-content-between gap-6">
                             <select class="form-select border fs-3" aria-label="Default select example">
+                                <?php
+                                    if(!empty($_GET['month'])){
+                                        ?>
+                                            <option value="<?=$_GET['month']?>"><?=$_GET['month']?></option>
+                                        <?php
+                                    }
+                                ?>
                                 <option value="January">January</option>
                                 <option value="February">February</option>
                                 <option value="March">March</option>
@@ -99,6 +128,30 @@
                                 <div class="company-list">
                                     <form method="GET" id="companyForm">
                                         <div class="form-group">
+                                            <select name="month" class="form-select border fs-3" aria-label="Default select example" onchange="document.getElementById('companyForm').submit()">
+                                                <?php
+                                                    if(!empty($_GET['month'])){
+                                                        ?>
+                                                            <option value="<?=$_GET['month']?>"><?=$_GET['month']?></option>
+                                                        <?php
+                                                    }
+                                                ?>
+                                                
+                                                <option value="January">January</option>
+                                                <option value="February">February</option>
+                                                <option value="March">March</option>
+                                                <option value="April">April</option>
+                                                <option value="May">May</option>
+                                                <option value="June">June</option>
+                                                <option value="July">July</option>
+                                                <option value="August">August</option>
+                                                <option value="September">September</option>
+                                                <option value="October">October</option>
+                                                <option value="November">November</option>
+                                                <option value="December">December</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group pt-4">
                                             <select name="company" id="company_list" class="form-control"
                                                 onchange="document.getElementById('companyForm').submit()">
                                                 <option value="">-- Select Company --</option>
@@ -199,14 +252,41 @@
                                                   if(!empty($result)){
                                                     foreach ($result as 
                                                     list("id"=>$id,"name"=>$name,"email"=>$email,
-                                                    "company"=>$company,"salary"=>$salary,'company_name'=>$company)) {
+                                                    "company"=>$company,"salary"=>$salary,'company_name'=>$company,'deducted_salary'=>$deducted_salary,'month'=>$month)) {
                                                     ?>
                                                 <div class="invoice-<?=$id?>" id="printableArea">
                                                     <div class="row pt-3">
                                                         <div class="col-md-12">
                                                             <div class="logo-image-wrapper">
-                                                                <img src="assets/images/dhothar_logo.png" width="185"
-                                                                    alt="">
+                                                                <?php
+                                                                    if($company=='Dhothar Pakistan'){
+                                                                        ?>
+                                                                            <img src="assets/images/dhothar_pakistan.jpeg" width="185"
+                                                                            alt="">
+                                                                        <?php
+                                                                    }elseif($company== 'Dhothar Uae'){
+                                                                    ?>
+                                                                            <img src="assets/images/dhothar_uae.jpeg" width="185"
+                                                                            alt="">
+                                                                    <?php
+                                                                    }elseif($company== 'Dhothar Romania'){
+                                                                        ?>
+                                                                            <img src="assets/images/dhothar_romania.jpeg" width="185"
+                                                                            alt="">
+                                                                        <?php
+                                                                    }elseif($company== 'Dhothar Interanational Travel & Tourism'){
+                                                                        ?>
+                                                                            <img src="assets/images/dhothar_dig.jpeg" width="185"
+                                                                            alt="">
+                                                                        <?php
+                                                                    }else{
+                                                                        ?>
+                                                                            <img src="assets/images/dhothar_logo.png" width="185"
+                                                                            alt="">
+                                                                        <?php
+                                                                    }
+                                                                ?>
+                                                                
                                                             </div>
                                                         </div>
                                                         <div class="col-md-12 pt-3">
@@ -281,14 +361,13 @@
                                                                         <tr>
                                                                             <td class="text-center">3</td>
                                                                             <td>
-                                                                                Unpaid Leave
+                                                                                Deducted Salary
 
                                                                                 <div class="unpaid-details pt-3">
-                                                                                    <p>(1 Day Leave) - 1500 </p>
                                                                                     <p>(3 Hours Short) - 500</p>
                                                                                 </div>
                                                                             </td>
-                                                                            <td class="text-end text-danger">-2000</td>
+                                                                            <td class="text-end text-danger">-<?=$deducted_salary?></td>
                                                                         </tr>
                                                                         <!-- end row -->
 

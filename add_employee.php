@@ -14,6 +14,7 @@ $employee_company = "";
 $employee_designation = "";
 $employee_date_of_joining = "";
 $employee_salary = "";
+$currency = "";
 $employee_cnic_passport = "";
 $employee_permanent_address = "";
 $employee_country = "";
@@ -33,6 +34,7 @@ if(isset($_POST['save_employee_info'])){
         "designation"        => $_POST['designation'],
         "date_of_joining"    => $_POST['date_of_joining'],
         "salary"             => $_POST['salary'],
+        "currency"             => $_POST['currency'],
         "cnic_passport"      => $_POST['cnic_passport'],
         "permanent_address"  => $_POST['permanent_address'],
         "country"            => $_POST['country'],
@@ -74,6 +76,7 @@ if(isset($_GET['id'])){
     $employee_designation = $employee['designation'];
     $employee_date_of_joining = $employee['date_of_joining'];
     $employee_salary = $employee['salary'];
+    $currency = $employee['currency'];
     $employee_cnic_passport = $employee['cnic_passport'];
     $employee_permanent_address = $employee['permanent_address'];
     $employee_country = $employee['country'];
@@ -95,6 +98,7 @@ if(isset($_POST['update_employee_info'])){
         "designation"        => $_POST['designation'],
         "date_of_joining"    => $_POST['date_of_joining'],
         "salary"             => $_POST['salary'],
+        "currency"             => $_POST['currency'],
         "cnic_passport"      => $_POST['cnic_passport'],
         "permanent_address"  => $_POST['permanent_address'],
         "country"            => $_POST['country'],
@@ -289,6 +293,17 @@ if(isset($_POST['update_employee_info'])){
                                                     <input type="text" class="form-control" name="salary"
                                                         value="<?=$employee_salary?>" required id="inputTime1"
                                                         placeholder="Enter Salary Here" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-0">
+                                            <div class="row align-items-center">
+                                                <label for="inputTime1" class="col-3 text-end  col-form-label">Currency
+                                                    <span style="color:red">*</span></label>
+                                                <div class="col-9 border-start pb-2 pt-2">
+                                                    <input type="text" class="form-control" name="currency"
+                                                        value="<?=$currency?>" required id="inputTime1"
+                                                        placeholder="Enter Currency Here" />
                                                 </div>
                                             </div>
                                         </div>

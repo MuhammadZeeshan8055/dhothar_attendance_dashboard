@@ -46,6 +46,13 @@
     <title><?=$web_title?></title>
     <!-- <link href="../../../../cdn.jsdelivr.net/npm/jvectormap%402.0.4/jquery-jvectormap.min.css" rel="stylesheet"> -->
 
+    <style>
+        #emp_attendance {
+            max-height: 400px;
+            overflow: auto;
+        }
+        
+    </style>
 </head>
 
 <body>
@@ -161,11 +168,11 @@
                                                     <td class="text-muted fs-3"><?=$curr_emp_country?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="ps-0 fs-3 text-muted">Phone -1</td>
+                                                    <td class="ps-0 fs-3 text-muted">Phone - 1</td>
                                                     <td class="text-muted fs-3"><?=$curr_emp_phone_1?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="ps-0 fs-3 text-muted">Phone -2</td>
+                                                    <td class="ps-0 fs-3 text-muted">Phone - 2</td>
                                                     <td class="text-muted fs-3"><?=$curr_emp_phone_2?></td>
                                                 </tr>
                                                 <tr>
@@ -670,7 +677,7 @@
 
                                     <?php if (!empty($end_time)) { ?>
                                     <p id="show-end-shift-message" class="mt-2">
-                                        <span class="text-success">See you tomorrow! ðŸ‘‹</span>
+                                        <span class="text-success">See you tomorrow !</span>
                                     </p>
                                     <?php } ?>
 
@@ -763,7 +770,7 @@
                                     </div>
                                 </div> -->
                                 <div class="card-body pt-8">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive" id="emp_attendance">
                                         <table class="table mb-0 align-middle text-nowrap" id="attendance_record">
 
                                         </table>

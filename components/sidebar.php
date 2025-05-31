@@ -97,6 +97,19 @@
 
                   <li class="nav-small-cap">
                       <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
+                      <span class="hide-menu">Salary Report</span>
+                  </li>
+
+                  <li class="sidebar-item">
+                      <a class="sidebar-link"
+                          href="salary_report">
+                          <iconify-icon icon="solar:bill-list-line-duotone"></iconify-icon>
+                          <span class="hide-menu">Salary Report</span>
+                      </a>
+                  </li>
+
+                  <li class="nav-small-cap">
+                      <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
                       <span class="hide-menu">Salary</span>
                   </li>
 
@@ -108,7 +121,7 @@
                       </a>
                   </li>
 
-                  <li class="nav-small-cap">
+                  <!-- <li class="nav-small-cap">
                       <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
                       <span class="hide-menu">Leave</span>
                   </li>
@@ -142,8 +155,8 @@
                           </li>
 
                       </ul>
-                  </li>
-                  <li class="nav-small-cap">
+                  </li> -->
+                  <!-- <li class="nav-small-cap">
                       <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
                       <span class="hide-menu">Profile</span>
                   </li>
@@ -154,7 +167,7 @@
                           <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
                           <span class="hide-menu">User Profile</span>
                       </a>
-                  </li>
+                  </li> -->
                   <li class="nav-small-cap">
                       <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
                       <span class="hide-menu">Setting</span>

@@ -2,7 +2,9 @@
 include "../session.php";
 $obj = new Database();
 
-if($officeIP==getUserIP()){
+$allowed_ips = [$pak_office, $uae_office, $rom_office];
+
+if (in_array(getUserIP(), $allowed_ips)) {
     if (isset($_POST['Empid'])) {
         $empid = $_POST['Empid'];
         $current_date = currentDate();

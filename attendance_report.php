@@ -2,11 +2,19 @@
   include("session.php");
   $obj = new Database();
 
+    $company = "";
+    if (isset($_GET['company'])) {
+        $company = trim($_GET['company']); // Optional: trim spaces
+    }
+    $company = !empty($company) ? $company : '';
+
+    
     $colName = "employee_info.id,employee_info.name,employee_info.email,employee_info.company,employee_info.salary,company.company_name";
+    $where = !empty($company) ? "company.company_name = '$company'" : "1";
     $join = 'company ON company.id = employee_info.company';
     $limit = 0;
     
-    $obj->select('employee_info',$colName,$join,null,null,$limit);
+    $obj->select('employee_info',$colName,$join,$where,null,$limit);
         $result = $obj->getResult();
 
     $companyName = "*";
@@ -73,21 +81,22 @@
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="company-list">
-                                    <div class="form-group">
-                                        <select name="company_list" id="company_list" class="form-control">
-                                            <?php
-                                                      
-                                                            foreach ($company_names as list("id"=>$id,"company_name"=>$company_name)) {
-                                                               
-                                                        ?>
-
-                                            <option value="<?=$company_name?>"><?=$company_name?></option>
-
-                                            <?php
-                                                            }
-                                                        ?>
-                                        </select>
-                                    </div>
+                                    <form method="GET" id="companyForm">
+                                        <div class="form-group">
+                                            <select name="company" id="company_list" class="form-control"
+                                                onchange="document.getElementById('companyForm').submit()">
+                                                <option value="">-- Select Company --</option>
+                                                <?php
+                                                    for ($i = 0; $i < count($company_names); $i++) {
+                                                        $id = $company_names[$i]['id'];
+                                                        $company_name = $company_names[$i]['company_name'];
+                                                        $selected = (isset($_GET['company']) && $_GET['company'] == $company_name) ? "selected" : "";
+                                                        echo "<option value=\"$company_name\" $selected>$company_name</option>";
+                                                    }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -108,11 +117,12 @@
                                         <tbody>
                                             <?php
                                                 $i=0;
-                                                foreach ($result as 
-                                                list("id"=>$id,"name"=>$name,"email"=>$email,
-                                                "company"=>$company,"salary"=>$salary,'company_name'=>$company)) {
-                                                    $i++;
-                                            ?>
+                                                if(!empty($result)){
+                                                    foreach ($result as 
+                                                    list("id"=>$id,"name"=>$name,"email"=>$email,
+                                                    "company"=>$company,"salary"=>$salary,'company_name'=>$company)) {
+                                                        $i++;
+                                                ?>
                                             <tr>
                                                 <td><?=$i?></td>
                                                 <td><?=$name?></td>
@@ -120,9 +130,17 @@
                                                 <td><?=$company?></td>
                                                 <td><?=$salary?></td>
                                                 <td>
-                                                    <a href="view_attendance?id=<?= $id ?>"
-                                                        class="btn btn-success">View Attendance</a>
+                                                    <a href="view_attendance?id=<?= $id ?>" class="btn btn-success">View
+                                                        Attendance</a>
                                                 </td>
+                                            </tr>
+                                            <?php
+                                                    }
+                                                }else{
+                                                    ?>
+                                            <tr>
+                                                <td class="text-center" colspan="6">No Attendance Record Found for this
+                                                    Company</td>
                                             </tr>
                                             <?php
                                                 }
