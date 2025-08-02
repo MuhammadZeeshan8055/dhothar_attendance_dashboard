@@ -1,6 +1,7 @@
 <?php
   include("session.php");
-
+  $obj = new Database();
+  
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($_POST as $meta_key => $meta_value) {
         $meta_key = $con->real_escape_string($meta_key);

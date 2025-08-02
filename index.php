@@ -1,29 +1,29 @@
 <?php
-    include("session.php");
-    $obj = new Database();
+include("session.php");
+$obj = new Database();
 
-    $id=$empid;
-    
-    $colName = "emp_id,shift_date,start_time,end_time,worked_hours,overtime";
-	$join = "";
-	$limit = 0;
-    $where = "attendance_record.emp_id=$id AND attendance_record.shift_date = CURDATE()";
-    
+$id = $empid;
 
-	$obj->select('attendance_record',$colName,$join,$where,null,$limit);
-    $result = $obj->getResult();
+$colName = "emp_id,shift_date,start_time,end_time,worked_hours,overtime";
+$join = "";
+$limit = 0;
+$where = "attendance_record.emp_id=$id AND attendance_record.shift_date = CURDATE()";
 
-    if(!empty($result)){
-        $attendance_record = $result[0];
-    
-        // Extracting the values
-        $shift_date = $attendance_record['shift_date'];
-        $start_time = $attendance_record['start_time'];
-        $end_time = $attendance_record['end_time'];
-        $worked_hours = $attendance_record['worked_hours'];
-        $overtime = $attendance_record['overtime'];
-    }
-    
+
+$obj->select('attendance_record', $colName, $join, $where, null, $limit);
+$result = $obj->getResult();
+
+if (!empty($result)) {
+    $attendance_record = $result[0];
+
+    // Extracting the values
+    $shift_date = $attendance_record['shift_date'];
+    $start_time = $attendance_record['start_time'];
+    $end_time = $attendance_record['end_time'];
+    $worked_hours = $attendance_record['worked_hours'];
+    $overtime = $attendance_record['overtime'];
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
@@ -43,7 +43,7 @@
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="stylesheet" href="assets/css/custom.css" />
 
-    <title><?=$web_title?></title>
+    <title><?= $web_title ?></title>
     <!-- <link href="../../../../cdn.jsdelivr.net/npm/jvectormap%402.0.4/jquery-jvectormap.min.css" rel="stylesheet"> -->
 
     <style>
@@ -51,7 +51,6 @@
             max-height: 400px;
             overflow: auto;
         }
-        
     </style>
 </head>
 
@@ -65,11 +64,11 @@
         <div class="page-wrapper">
 
             <?php
-                include('components/header.php');
+            include('components/header.php');
             ?>
 
             <?php
-                include('components/sidebar.php');
+            include('components/sidebar.php');
             ?>
 
             <div class="body-wrapper">
@@ -78,32 +77,46 @@
                         <div class="col-sm-6 col-lg-3">
                             <div class="card bg-box position-relative text-bg-info">
                                 <div class="card-body text-center">
-                                    <h2 class="fw-medium fs-8 text-white"><?php echo $count = $obj->count('employee_info', 'id', null); ?></h2>
-                                    <h6 class="text-white mb-0 fw-medium">Total Employees</h6>
+                                    <a href="employee">
+                                        <h2 class="fw-medium fs-8 text-white">
+                                            <?php echo $count = $obj->count('employee_info', 'id', null); ?></h2>
+                                        <h6 class="text-white mb-0 fw-medium">Total Employees</h6>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6 col-lg-3">
                             <div class="card bg-box position-relative text-bg-secondary">
                                 <div class="card-body text-center">
-                                    <h2 class="fw-medium fs-8 text-white"><?php echo $count = $obj->count('company', 'id', null); ?></h2>
-                                    <h6 class="text-white mb-0 fw-medium">Companies</h6>
+                                    <a href="company">
+                                        <h2 class="fw-medium fs-8 text-white">
+                                            <?php echo $count = $obj->count('company', 'id', null); ?></h2>
+                                        <h6 class="text-white mb-0 fw-medium">Companies</h6>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6 col-lg-3">
                             <div class="card bg-box position-relative text-bg-success">
                                 <div class="card-body text-center">
-                                    <h2 class="fw-medium fs-8 text-white">4</h2>
-                                    <h6 class="text-white mb-0 fw-medium">Total Leaves Remaining</h6>
+                                    <a href="applied_leaves">
+                                        <h2 class="fw-medium fs-8 text-white">
+                                            <?php echo $count = $obj->count('employee_leaves', 'id', where: null); ?>
+                                        </h2>
+                                        <h6 class="text-white mb-0 fw-medium">Total Leaves Applied</h6>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6 col-lg-3">
                             <div class="card bg-box position-relative text-bg-warning">
                                 <div class="card-body text-center">
-                                    <h2 class="fw-medium fs-8 text-white">3</h2>
-                                    <h6 class="text-white mb-0 fw-medium">Approved Leaves</h6>
+                                    <a href="approved_leaves">
+                                        <h2 class="fw-medium fs-8 text-white">
+                                            <?php echo $count = $obj->count('employee_leaves', 'id', where: "status = 'Approved'"); ?>
+                                        </h2>
+                                        <h6 class="text-white mb-0 fw-medium">Approved Leaves</h6>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -131,19 +144,19 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Company</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_company?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_company ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Designation</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_designation?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_designation ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Employee Name</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_name?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_name ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Date of Joining</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_date_of_joining?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_date_of_joining ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Salary</td>
@@ -152,44 +165,44 @@
                                                             style="cursor: pointer; color: blue;">Show
                                                             Salary</p>
                                                         <span id="salary"
-                                                            style="display: none;"><?=$curr_emp_salary?></span>
+                                                            style="display: none;"><?= $curr_emp_salary ?></span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">CNIC Or PASSPORT</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_cnic_passport?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_cnic_passport ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Permenant Address</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_permanent_address?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_permanent_address ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Country</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_country?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_country ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Phone - 1</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_phone_1?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_phone_1 ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Phone - 2</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_phone_2?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_phone_2 ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Email</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_email?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_email ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Bank Name</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_bank_name?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_bank_name ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">Account Title</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_account_title?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_account_title ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="ps-0 fs-3 text-muted">IBAN</td>
-                                                    <td class="text-muted fs-3"><?=$curr_emp_iban?></td>
+                                                    <td class="text-muted fs-3"><?= $curr_emp_iban ?></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -204,26 +217,26 @@
                                     <h4 class="card-title">Check In / Out Timings</h4>
 
                                     <?php if (!empty($start_time) || !empty($end_time)) { ?>
-                                    <p class="mt-2 show-shift-details" style="font-weight: 800;">
-                                        <?php if (!empty($start_time)) { ?>
-                                        <span id="shift_started_at" class="text-success">Shift Start At:
-                                            <?= $start_time ?></span>
-                                        <?php } ?>
+                                        <p class="mt-2 show-shift-details" style="font-weight: 800;">
+                                            <?php if (!empty($start_time)) { ?>
+                                                <span id="shift_started_at" class="text-success">Shift Start At:
+                                                    <?= $start_time ?></span>
+                                            <?php } ?>
 
-                                        <?php if (!empty($end_time)) { ?>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <span class="text-danger" id="shift_ended_at">|
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift Ended At: <?= $end_time ?></span>
-                                        <?php } ?>
-                                    </p>
+                                            <?php if (!empty($end_time)) { ?>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <span class="text-danger" id="shift_ended_at">|
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift Ended At: <?= $end_time ?></span>
+                                            <?php } ?>
+                                        </p>
                                     <?php } else { ?>
-                                    <p class="mt-2 show-shift-details" style="font-weight: 800; display:none;">
-                                        <span id="shift_started_at" class="text-success" style="display:none">Shift
-                                            Start At: 09:00 am</span>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <span class="text-danger" id="shift_ended_at" style="display:none">|
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift End At: 09:00 am</span>
-                                    </p>
+                                        <p class="mt-2 show-shift-details" style="font-weight: 800; display:none;">
+                                            <span id="shift_started_at" class="text-success" style="display:none">Shift
+                                                Start At: 09:00 am</span>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <span class="text-danger" id="shift_ended_at" style="display:none">|
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift End At: 09:00 am</span>
+                                        </p>
                                     <?php } ?>
 
 
@@ -269,28 +282,28 @@
                                         <!--</script>-->
                                         <script
                                             src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js">
-                                        </script>
+                                            </script>
                                         <div id="clock">
                                             <svg version="1.1" id="clock-svg" xmlns="http://www.w3.org/2000/svg"
                                                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="600px"
                                                 height="300px" viewBox="50 70 400 370" xml:space="preserve">
                                                 <circle id="face" fill="#F4F3ED" cx="243.869" cy="250.796" r="130.8" />
                                                 <path id="rim" fill="#383838" d="M243.869,101.184c-82.629,0-149.612,66.984-149.612,149.612c0,82.629,66.983,149.612,149.612,149.612
-	S393.48,333.425,393.48,250.796S326.498,101.184,243.869,101.184z M243.869,386.455c-74.922,0-135.659-60.736-135.659-135.659
-	c0-74.922,60.737-135.659,135.659-135.659c74.922,0,135.658,60.737,135.658,135.659
-	C379.527,325.719,318.791,386.455,243.869,386.455z" />
+    S393.48,333.425,393.48,250.796S326.498,101.184,243.869,101.184z M243.869,386.455c-74.922,0-135.659-60.736-135.659-135.659
+    c0-74.922,60.737-135.659,135.659-135.659c74.922,0,135.658,60.737,135.658,135.659
+    C379.527,325.719,318.791,386.455,243.869,386.455z" />
                                                 <g id="inner">
                                                     <g opacity="0.2">
                                                         <path fill="#C4C4C4" d="M243.869,114.648c-75.748,0-137.154,61.406-137.154,137.153c0,75.749,61.406,137.154,137.154,137.154
-			c75.748,0,137.153-61.405,137.153-137.154C381.022,176.054,319.617,114.648,243.869,114.648z M243.869,382.56
-			c-72.216,0-130.758-58.543-130.758-130.758s58.542-130.758,130.758-130.758c72.216,0,130.758,58.543,130.758,130.758
-			S316.085,382.56,243.869,382.56z" />
+            c75.748,0,137.153-61.405,137.153-137.154C381.022,176.054,319.617,114.648,243.869,114.648z M243.869,382.56
+            c-72.216,0-130.758-58.543-130.758-130.758s58.542-130.758,130.758-130.758c72.216,0,130.758,58.543,130.758,130.758
+            S316.085,382.56,243.869,382.56z" />
                                                     </g>
                                                     <g>
                                                         <path fill="#282828" d="M243.869,113.637c-75.748,0-137.154,61.406-137.154,137.153c0,75.749,61.406,137.154,137.154,137.154
-			c75.748,0,137.153-61.405,137.153-137.154C381.022,175.043,319.617,113.637,243.869,113.637z M243.869,381.548
-			c-72.216,0-130.758-58.542-130.758-130.757c0-72.216,58.542-130.758,130.758-130.758c72.216,0,130.758,58.543,130.758,130.758
-			C374.627,323.005,316.085,381.548,243.869,381.548z" />
+            c75.748,0,137.153-61.405,137.153-137.154C381.022,175.043,319.617,113.637,243.869,113.637z M243.869,381.548
+            c-72.216,0-130.758-58.542-130.758-130.757c0-72.216,58.542-130.758,130.758-130.758c72.216,0,130.758,58.543,130.758,130.758
+            C374.627,323.005,316.085,381.548,243.869,381.548z" />
                                                     </g>
                                                 </g>
                                                 <g id="markings">
@@ -488,11 +501,11 @@
                                                         font-family="'Futura-Medium'" font-size="26">12</text>
                                                 </g>
                                                 <path id="hours" fill="#3A3A3A" d="M242.515,270.21c-0.44,0-0.856-0.355-0.926-0.79l-3.156-19.811c-0.069-0.435-0.103-1.149-0.074-1.588
-	l4.038-62.009c0.03-0.439,0.414-0.798,0.854-0.798h0.5c0.44,0,0.823,0.359,0.852,0.798l4.042,62.205
-	c0.028,0.439-0.015,1.152-0.097,1.584l-3.712,19.623c-0.082,0.433-0.508,0.786-0.948,0.786H242.515z" />
+    l4.038-62.009c0.03-0.439,0.414-0.798,0.854-0.798h0.5c0.44,0,0.823,0.359,0.852,0.798l4.042,62.205
+    c0.028,0.439-0.015,1.152-0.097,1.584l-3.712,19.623c-0.082,0.433-0.508,0.786-0.948,0.786H242.515z" />
                                                 <path id="minutes" fill="#3A3A3A" d="M247.862,249.75l-2.866,24.244c-0.099,1.198-0.498,2.18-1.497,2.179c-0.999,0-1.397-0.98-1.498-2.179
-			l-2.861-24.508c-0.099-1.199,3.479-93.985,3.479-93.985c0.036-1.201-0.117-2.183,0.881-2.183c0.999,0,0.847,0.982,0.882,2.183
-			L247.862,249.75z" />
+            l-2.861-24.508c-0.099-1.199,3.479-93.985,3.479-93.985c0.036-1.201-0.117-2.183,0.881-2.183c0.999,0,0.847,0.982,0.882,2.183
+            L247.862,249.75z" />
                                                 <g id="seconds">
                                                     <line fill="none" stroke="#BF4116" stroke-miterlimit="10" x1="243.5"
                                                         y1="143" x2="243.5" y2="266" />
@@ -503,196 +516,196 @@
                                             </svg>
                                         </div>
                                         <style>
-                                        svg {
-                                            display: block;
-                                            margin: auto;
-                                        }
+                                            svg {
+                                                display: block;
+                                                margin: auto;
+                                            }
                                         </style>
                                         <script>
-                                        var s = Snap(document.getElementById("clock-svg"));
+                                            var s = Snap(document.getElementById("clock-svg"));
 
-                                        var seconds = s.select("#seconds"),
-                                            minutes = s.select("#minutes"),
-                                            hours = s.select("#hours"),
-                                            rim = s.select("#rim"),
-                                            face = {
-                                                elem: s.select("#face"),
-                                                cx: s.select("#face").getBBox().cx,
-                                                cy: s.select("#face").getBBox().cy,
-                                            },
-                                            angle = 0,
-                                            easing = function(a) {
-                                                return a == !!a ? a : Math.pow(4, -10 * a) * Math.sin((a - .075) * 2 *
-                                                    Math.PI / .3) + 1;
-                                            };
+                                            var seconds = s.select("#seconds"),
+                                                minutes = s.select("#minutes"),
+                                                hours = s.select("#hours"),
+                                                rim = s.select("#rim"),
+                                                face = {
+                                                    elem: s.select("#face"),
+                                                    cx: s.select("#face").getBBox().cx,
+                                                    cy: s.select("#face").getBBox().cy,
+                                                },
+                                                angle = 0,
+                                                easing = function (a) {
+                                                    return a == !!a ? a : Math.pow(4, -10 * a) * Math.sin((a - .075) * 2 *
+                                                        Math.PI / .3) + 1;
+                                                };
 
-                                        var sshadow = seconds.clone(),
-                                            mshadow = minutes.clone(),
-                                            hshadow = hours.clone(),
-                                            rshadow = rim.clone(),
-                                            shadows = [sshadow, mshadow, hshadow];
+                                            var sshadow = seconds.clone(),
+                                                mshadow = minutes.clone(),
+                                                hshadow = hours.clone(),
+                                                rshadow = rim.clone(),
+                                                shadows = [sshadow, mshadow, hshadow];
 
-                                        //Insert shadows before their respective opaque pals
-                                        seconds.before(sshadow);
-                                        minutes.before(mshadow);
-                                        hours.before(hshadow);
-                                        rim.before(rshadow);
+                                            //Insert shadows before their respective opaque pals
+                                            seconds.before(sshadow);
+                                            minutes.before(mshadow);
+                                            hours.before(hshadow);
+                                            rim.before(rshadow);
 
-                                        //Create a filter to make a blurry black version of a thing
-                                        var filter = Snap.filter.blur(0.1) + Snap.filter.brightness(0);
+                                            //Create a filter to make a blurry black version of a thing
+                                            var filter = Snap.filter.blur(0.1) + Snap.filter.brightness(0);
 
-                                        //Add the filter, shift and opacity to each of the shadows
-                                        shadows.forEach(function(el) {
-                                            el.attr({
-                                                transform: "translate(0, 2)",
-                                                opacity: 0.2,
-                                                filter: s.filter(filter)
-                                            });
-                                        })
+                                            //Add the filter, shift and opacity to each of the shadows
+                                            shadows.forEach(function (el) {
+                                                el.attr({
+                                                    transform: "translate(0, 2)",
+                                                    opacity: 0.2,
+                                                    filter: s.filter(filter)
+                                                });
+                                            })
 
-                                        rshadow.attr({
-                                            transform: "translate(0, 8) ",
-                                            opacity: 0.5,
-                                            filter: s.filter(Snap.filter.blur(0, 8) + Snap.filter.brightness(
-                                                0)),
-                                        })
+                                            rshadow.attr({
+                                                transform: "translate(0, 8) ",
+                                                opacity: 0.5,
+                                                filter: s.filter(Snap.filter.blur(0, 8) + Snap.filter.brightness(
+                                                    0)),
+                                            })
 
-                                        function update() {
-                                            var time = new Date();
-                                            setHours(time);
-                                            setMinutes(time);
-                                            setSeconds(time);
-                                        }
+                                            function update() {
+                                                var time = new Date();
+                                                setHours(time);
+                                                setMinutes(time);
+                                                setSeconds(time);
+                                            }
 
-                                        function setHours(t) {
-                                            var hour = t.getHours();
-                                            hour %= 12;
-                                            hour += Math.floor(t.getMinutes() / 10) / 6;
-                                            var angle = hour * 360 / 12;
-                                            hours.animate({
+                                            function setHours(t) {
+                                                var hour = t.getHours();
+                                                hour %= 12;
+                                                hour += Math.floor(t.getMinutes() / 10) / 6;
+                                                var angle = hour * 360 / 12;
+                                                hours.animate({
                                                     transform: "rotate(" + angle + " 244 251)"
                                                 },
-                                                100,
-                                                mina.linear,
-                                                function() {
-                                                    if (angle === 360) {
-                                                        hours.attr({
-                                                            transform: "rotate(" + 0 + " " + face.cx + " " +
-                                                                face.cy + ")"
-                                                        });
-                                                        hshadow.attr({
-                                                            transform: "translate(0, 2) rotate(" + 0 + " " +
-                                                                face.cx + " " + face.cy + 2 + ")"
-                                                        });
+                                                    100,
+                                                    mina.linear,
+                                                    function () {
+                                                        if (angle === 360) {
+                                                            hours.attr({
+                                                                transform: "rotate(" + 0 + " " + face.cx + " " +
+                                                                    face.cy + ")"
+                                                            });
+                                                            hshadow.attr({
+                                                                transform: "translate(0, 2) rotate(" + 0 + " " +
+                                                                    face.cx + " " + face.cy + 2 + ")"
+                                                            });
+                                                        }
                                                     }
-                                                }
-                                            );
-                                            hshadow.animate({
+                                                );
+                                                hshadow.animate({
                                                     transform: "translate(0, 2) rotate(" + angle + " " + face.cx +
                                                         " " + face.cy + 2 + ")"
                                                 },
-                                                100,
-                                                mina.linear
-                                            );
-                                        }
+                                                    100,
+                                                    mina.linear
+                                                );
+                                            }
 
-                                        function setMinutes(t) {
-                                            var minute = t.getMinutes();
-                                            minute %= 60;
-                                            minute += Math.floor(t.getSeconds() / 10) / 6;
-                                            var angle = minute * 360 / 60;
-                                            minutes.animate({
+                                            function setMinutes(t) {
+                                                var minute = t.getMinutes();
+                                                minute %= 60;
+                                                minute += Math.floor(t.getSeconds() / 10) / 6;
+                                                var angle = minute * 360 / 60;
+                                                minutes.animate({
                                                     transform: "rotate(" + angle + " " + face.cx + " " + face.cy +
                                                         ")"
                                                 },
-                                                100,
-                                                mina.linear,
-                                                function() {
-                                                    if (angle === 360) {
-                                                        minutes.attr({
-                                                            transform: "rotate(" + 0 + " " + face.cx + " " +
-                                                                face.cy + ")"
-                                                        });
-                                                        mshadow.attr({
-                                                            transform: "translate(0, 2) rotate(" + 0 + " " +
-                                                                face.cx + " " + face.cy + 2 + ")"
-                                                        });
+                                                    100,
+                                                    mina.linear,
+                                                    function () {
+                                                        if (angle === 360) {
+                                                            minutes.attr({
+                                                                transform: "rotate(" + 0 + " " + face.cx + " " +
+                                                                    face.cy + ")"
+                                                            });
+                                                            mshadow.attr({
+                                                                transform: "translate(0, 2) rotate(" + 0 + " " +
+                                                                    face.cx + " " + face.cy + 2 + ")"
+                                                            });
+                                                        }
                                                     }
-                                                }
-                                            );
-                                            mshadow.animate({
+                                                );
+                                                mshadow.animate({
                                                     transform: "translate(0, 2) rotate(" + angle + " " + face.cx +
                                                         " " + face.cy + 2 + ")"
                                                 },
-                                                100,
-                                                mina.linear
-                                            );
-                                        }
+                                                    100,
+                                                    mina.linear
+                                                );
+                                            }
 
-                                        function setSeconds(t) {
-                                            t = t.getSeconds();
-                                            t %= 60;
-                                            var angle = t * 360 / 60;
-                                            //if ticking over to 0 seconds, animate angle to 360 and then switch angle to 0
-                                            if (angle === 0) angle = 360;
-                                            seconds.animate({
+                                            function setSeconds(t) {
+                                                t = t.getSeconds();
+                                                t %= 60;
+                                                var angle = t * 360 / 60;
+                                                //if ticking over to 0 seconds, animate angle to 360 and then switch angle to 0
+                                                if (angle === 0) angle = 360;
+                                                seconds.animate({
                                                     transform: "rotate(" + angle + " " + face.cx + " " + face.cy +
                                                         ")"
                                                 },
-                                                600,
-                                                easing,
-                                                function() {
-                                                    if (angle === 360) {
-                                                        seconds.attr({
-                                                            transform: "rotate(" + 0 + " " + face.cx + " " +
-                                                                face.cy + ")"
-                                                        });
-                                                        sshadow.attr({
-                                                            transform: "translate(0, 2) rotate(" + 0 + " " +
-                                                                face.cx + " " + face.cy + 2 + ")"
-                                                        });
+                                                    600,
+                                                    easing,
+                                                    function () {
+                                                        if (angle === 360) {
+                                                            seconds.attr({
+                                                                transform: "rotate(" + 0 + " " + face.cx + " " +
+                                                                    face.cy + ")"
+                                                            });
+                                                            sshadow.attr({
+                                                                transform: "translate(0, 2) rotate(" + 0 + " " +
+                                                                    face.cx + " " + face.cy + 2 + ")"
+                                                            });
+                                                        }
                                                     }
-                                                }
-                                            );
-                                            sshadow.animate({
+                                                );
+                                                sshadow.animate({
                                                     transform: "translate(0, 2) rotate(" + angle + " " + face.cx +
                                                         " " + face.cy + 2 + ")"
                                                 },
-                                                600,
-                                                easing
-                                            );
-                                        }
-                                        setInterval(update, 1000);
+                                                    600,
+                                                    easing
+                                                );
+                                            }
+                                            setInterval(update, 1000);
                                         </script>
 
                                     </div>
 
 
                                     <?php if (!empty($start_time) && empty($end_time)) { ?>
-                                    <button id="end_shift" data-id='<?= $empid ?>'
-                                        class="btn btn-danger mt-2 btn-large">
-                                        End Shift
-                                    </button>
+                                        <button id="end_shift" data-id='<?= $empid ?>'
+                                            class="btn btn-danger mt-2 btn-large">
+                                            End Shift
+                                        </button>
                                     <?php } ?>
 
                                     <?php if (!empty($end_time)) { ?>
-                                    <p id="show-end-shift-message" class="mt-2">
-                                        <span class="text-success">See you tomorrow !</span>
-                                    </p>
+                                        <p id="show-end-shift-message" class="mt-2">
+                                            <span class="text-success">See you tomorrow !</span>
+                                        </p>
                                     <?php } ?>
 
                                     <?php if (empty($start_time) && empty($end_time)) { ?>
-                                    <button id="start_shift" data-id='<?= $empid ?>'
-                                        class="btn btn-success mt-2 btn-large">
-                                        Start Shift
-                                    </button>
-                                    <button id="end_shift" data-id='<?= $empid ?>' class="btn btn-danger mt-2 btn-large"
-                                        style="display:none">
-                                        End Shift
-                                    </button>
-                                    <p id="show-end-shift-message" class="mt-2" style="display:none">
-                                        <span class="text-success">See you tomorrow! ðŸ‘‹</span>
-                                    </p>
+                                        <button id="start_shift" data-id='<?= $empid ?>'
+                                            class="btn btn-success mt-2 btn-large">
+                                            Start Shift
+                                        </button>
+                                        <button id="end_shift" data-id='<?= $empid ?>' class="btn btn-danger mt-2 btn-large"
+                                            style="display:none">
+                                            End Shift
+                                        </button>
+                                        <p id="show-end-shift-message" class="mt-2" style="display:none">
+                                            <span class="text-success">See you tomorrow!</span>
+                                        </p>
                                     <?php } ?>
 
 
@@ -704,7 +717,7 @@
                                 <div class="card-body">
                                     <div class="d-md-flex no-block">
                                         <div>
-                                            <h4 class="card-title">Attendance Report <?=$current_year = date("Y");?>
+                                            <h4 class="card-title">Attendance Report <?= $current_year = date("Y"); ?>
                                             </h4>
 
                                             <table class="table mb-0 align-middle text-nowrap">
@@ -712,27 +725,29 @@
                                                     <tr>
                                                         <td>
                                                             <p class="card-subtitle">Total Working Hours
-                                                                <span><?=$total_working_hours?></span>
+                                                                <span><?= $total_working_hours ?></span>
                                                             </p>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>
                                                             <p class="card-subtitle">Break Timings <span> (
-                                                                    <?=$break_timing?> )</span></p>
+                                                                    <?= $break_timing ?> )</span></p>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>
                                                             <p class="card-subtitle">Total Working Hours (
-                                                                <?=$total_working_hours?> ) - with <?=$break_time?>
-                                                                hour Break Time.</p>
+                                                                <?= $total_working_hours ?> ) - with <?= $break_time ?>
+                                                                hour Break Time.
+                                                            </p>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>
                                                             <p class="card-subtitle">Official Working Hours (
-                                                                <?=$official_working_hours?> )</p>
+                                                                <?= $official_working_hours ?> )
+                                                            </p>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -743,7 +758,7 @@
                                         <div class="ms-auto">
                                             <select class="form-select" id="monthSelect">
                                                 <?php
-                                                    $current_month = date("F"); // Returns full month name (e.g., "March")
+                                                $current_month = date("F"); // Returns full month name (e.g., "March")
                                                 ?>
                                                 <option selected="<?= $current_month ?>"><?= $current_month ?></option>
                                                 <option value="January">January</option>
@@ -808,160 +823,160 @@
     <script src="assets/js/jquery.js"></script>
 
     <script>
-    $(document).ready(function() {
+        $(document).ready(function () {
 
-        // function loadTable() {
-        //     $("#attendance_record").html('<div class="loader">Loading Data...</div>'); // Show loader before AJAX call
+            // function loadTable() {
+            //     $("#attendance_record").html('<div class="loader">Loading Data...</div>'); // Show loader before AJAX call
 
-        //     $.ajax({
-        //         url: "emp_attendance_record",
-        //         type: "POST",
-        //         success: function (data) {
-        //             $("#attendance_record").html(data); // Replace loader with table data
-        //         },
-        //         error: function () {
-        //             $("#attendance_record").html("<p>Error loading data.</p>"); // Handle errors
-        //         }
-        //     });
-        // }
+            //     $.ajax({
+            //         url: "emp_attendance_record",
+            //         type: "POST",
+            //         success: function (data) {
+            //             $("#attendance_record").html(data); // Replace loader with table data
+            //         },
+            //         error: function () {
+            //             $("#attendance_record").html("<p>Error loading data.</p>"); // Handle errors
+            //         }
+            //     });
+            // }
 
-        // // Load Table Records on Page Load
-        // loadTable();
+            // // Load Table Records on Page Load
+            // loadTable();
 
-        function loadTable(month = null) {
-            $("#attendance_record").html(
-            '<div class="loader">Loading Data...</div>'); // Show loader before AJAX call
+            function loadTable(month = null) {
+                $("#attendance_record").html(
+                    '<div class="loader">Loading Data...</div>'); // Show loader before AJAX call
 
-            // alert(month);
-            $.ajax({
-                url: "emp_attendance_record",
-                type: "POST",
-                data: {
-                    month: month
-                }, // Send selected month if available
-                success: function(data) {
-                    $("#attendance_record").html(data); // Replace loader with table data
-                },
-                error: function() {
-                    $("#attendance_record").html("<p>Error loading data.</p>"); // Handle errors
-                }
+                // alert(month);
+                $.ajax({
+                    url: "emp_attendance_record",
+                    type: "POST",
+                    data: {
+                        month: month
+                    }, // Send selected month if available
+                    success: function (data) {
+                        $("#attendance_record").html(data); // Replace loader with table data
+                    },
+                    error: function () {
+                        $("#attendance_record").html("<p>Error loading data.</p>"); // Handle errors
+                    }
+                });
+            }
+
+            // Load Table Records on Page Load with Current Month
+            loadTable($("#monthSelect").val());
+
+            // Fetch Data When Month Changes
+            $("#monthSelect").change(function () {
+                let selectedMonth = $(this).val();
+                loadTable(selectedMonth);
             });
-        }
-
-        // Load Table Records on Page Load with Current Month
-        loadTable($("#monthSelect").val());
-
-        // Fetch Data When Month Changes
-        $("#monthSelect").change(function() {
-            let selectedMonth = $(this).val();
-            loadTable(selectedMonth);
-        });
 
 
-        $("#show-salary").on("click", function() {
-            $("#salary").show(); // Show the salary
-            $(this).hide(); // Hide "Show Salary" after clicking
-        });
+            $("#show-salary").on("click", function () {
+                $("#salary").show(); // Show the salary
+                $(this).hide(); // Hide "Show Salary" after clicking
+            });
 
-        $(document).on("click", "#start_shift", function() {
-            let $this = $(this);
-            $this.html("Please wait...").prop("disabled", true);
+            $(document).on("click", "#start_shift", function () {
+                let $this = $(this);
+                $this.html("Please wait...").prop("disabled", true);
 
-            var empid = $("#start_shift").data("id");
-            var selectedMonth = $("#monthSelect").val(); // Get the currently selected month
+                var empid = $("#start_shift").data("id");
+                var selectedMonth = $("#monthSelect").val(); // Get the currently selected month
 
-            $.ajax({
-                url: "ajax/shift_started",
-                type: "POST",
-                dataType: "json", // Expect JSON response
-                data: {
-                    Empid: empid
-                },
-                success: function(res) {
-                    console.log('Response:', res);
+                $.ajax({
+                    url: "ajax/shift_started",
+                    type: "POST",
+                    dataType: "json", // Expect JSON response
+                    data: {
+                        Empid: empid
+                    },
+                    success: function (res) {
+                        console.log('Response:', res);
 
-                    if (res.status == 1) {
-                        $this.html("Shift Started Successfully...");
+                        if (res.status == 1) {
+                            $this.html("Shift Started Successfully...");
 
-                        // Update shift start time
-                        $("#shift_started_at").html("Shift Start At: " + res.start_time)
-                            .show();
+                            // Update shift start time
+                            $("#shift_started_at").html("Shift Start At: " + res.start_time)
+                                .show();
 
-                        setTimeout(function() {
-                            $this.hide();
-                            $("#end_shift").show();
-                            $(".show-shift-details").show();
-                        }, 1000);
+                            setTimeout(function () {
+                                $this.hide();
+                                $("#end_shift").show();
+                                $(".show-shift-details").show();
+                            }, 1000);
 
-                        // Call loadTable with the selected month to refresh the records
-                        loadTable(selectedMonth);
-                    } else if (res.status == 2) {
-                        alert("A shift must be started from the office.");
-                        $this.html("Start Shift").prop("disabled", false);
-                    } else {
-                        alert("Shift Not Started");
+                            // Call loadTable with the selected month to refresh the records
+                            loadTable(selectedMonth);
+                        } else if (res.status == 2) {
+                            alert("A shift must be started from the office.");
+                            $this.html("Start Shift").prop("disabled", false);
+                        } else {
+                            alert("Shift Not Started");
+                            $this.html("Start Shift").prop("disabled", false);
+                        }
+                    },
+                    error: function () {
+                        alert("Error occurred. Please try again.");
                         $this.html("Start Shift").prop("disabled", false);
                     }
-                },
-                error: function() {
-                    alert("Error occurred. Please try again.");
-                    $this.html("Start Shift").prop("disabled", false);
-                }
+                });
             });
-        });
 
 
-        $(document).on("click", "#end_shift", function() {
-            let $this = $(this);
-            $this.html("Please wait...").prop("disabled", true);
+            $(document).on("click", "#end_shift", function () {
+                let $this = $(this);
+                $this.html("Please wait...").prop("disabled", true);
 
-            var empid = $("#end_shift").data("id");
-            var selectedMonth = $("#monthSelect").val(); // Get the currently selected month
+                var empid = $("#end_shift").data("id");
+                var selectedMonth = $("#monthSelect").val(); // Get the currently selected month
 
-            $.ajax({
-                url: "ajax/end_shift",
-                type: "POST",
-                dataType: "json", // Expect JSON response
-                data: {
-                    Empid: empid
-                },
-                success: function(res) {
-                    console.log('Response:', res);
+                $.ajax({
+                    url: "ajax/end_shift",
+                    type: "POST",
+                    dataType: "json", // Expect JSON response
+                    data: {
+                        Empid: empid
+                    },
+                    success: function (res) {
+                        console.log('Response:', res);
 
-                    if (res.status == 1) {
-                        $this.html("Shift Ended Successfully...");
+                        if (res.status == 1) {
+                            $this.html("Shift Ended Successfully...");
 
-                        // Update shift start time
-                        $("#shift_ended_at").html(
+                            // Update shift start time
+                            $("#shift_ended_at").html(
                                 "|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shift Ended At: " +
                                 res.end_time)
-                            .show();
+                                .show();
 
-                        setTimeout(function() {
-                            $this.hide();
-                            $(".show-shift-details").show();
-                            $("#show-end-shift-message").show();
-                        }, 1000);
+                            setTimeout(function () {
+                                $this.hide();
+                                $(".show-shift-details").show();
+                                $("#show-end-shift-message").show();
+                            }, 1000);
 
-                        loadTable(selectedMonth);
+                            loadTable(selectedMonth);
 
-                    } else if (res.status == 2) {
-                        alert("A shift must be end from the office.");
-                        $this.html("Start Shift").prop("disabled", false);
-                    } else {
-                        alert("Shift Not Ended");
-                        $this.html("Start End").prop("disabled", false);
+                        } else if (res.status == 2) {
+                            alert("A shift must be end from the office.");
+                            $this.html("Start Shift").prop("disabled", false);
+                        } else {
+                            alert("Shift Not Ended");
+                            $this.html("Start End").prop("disabled", false);
+                        }
+                    },
+                    error: function () {
+                        alert("Error occurred. Please try again.");
+                        $this.html("End Shift").prop("disabled", false);
                     }
-                },
-                error: function() {
-                    alert("Error occurred. Please try again.");
-                    $this.html("End Shift").prop("disabled", false);
-                }
+                });
             });
+
+
         });
-
-
-    });
     </script>
 </body>
 

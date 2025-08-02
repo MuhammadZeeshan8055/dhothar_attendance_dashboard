@@ -121,7 +121,7 @@
                       </a>
                   </li>
 
-                  <!-- <li class="nav-small-cap">
+                  <li class="nav-small-cap">
                       <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
                       <span class="hide-menu">Leave</span>
                   </li>
@@ -133,7 +133,7 @@
                       </a>
                       <ul aria-expanded="false" class="collapse first-level">
                           <li class="sidebar-item">
-                              <a class="sidebar-link"
+                              <a href="applied_leaves" class="sidebar-link"
                                   href="#">
                                   <span class="icon-small"></span>
                                   <span class="hide-menu">Applied Leaves</span>
@@ -141,21 +141,35 @@
                           </li>
                           <li class="sidebar-item">
                               <a class="sidebar-link"
-                                  href="#">
+                                  href="approved_leaves">
                                   <span class="icon-small"></span>
                                   <span class="hide-menu">Approved Leaves</span>
                               </a>
                           </li>
                           <li class="sidebar-item">
                               <a class="sidebar-link"
-                                  href="#">
+                                  href="declined_leaves">
                                   <span class="icon-small"></span>
                                   <span class="hide-menu">Declined Leaves</span>
                               </a>
                           </li>
 
                       </ul>
-                  </li> -->
+                  </li>
+
+                  <li class="nav-small-cap">
+                      <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
+                      <span class="hide-menu">Leave Requests</span>
+                  </li>
+
+                  <li class="sidebar-item">
+                      <a class="sidebar-link"
+                          href="leave_requests">
+                          <iconify-icon icon="solar:bill-list-line-duotone"></iconify-icon>
+                          <span class="hide-menu">Leave Requests <?php echo '(' . ($count = $obj->count('employee_leaves', 'id', "status='Applied'")) . ')'; ?></span>
+                      </a>
+                  </li>
+
                   <!-- <li class="nav-small-cap">
                       <iconify-icon icon="solar:menu-dots-linear" class="mini-icon"></iconify-icon>
                       <span class="hide-menu">Profile</span>
